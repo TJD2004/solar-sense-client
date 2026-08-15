@@ -163,6 +163,10 @@ export function SimulationProvider({ children }) {
   const scenario = !usingFallback && backendStatus ? backendStatus.scenario : getScenario(scenarioId);
   const scenarios = !usingFallback && backendStatus ? backendStatus.scenarios : SCENARIO_LIST;
 
+  const transientBlip = !usingFallback && backendStatus
+    ? backendStatus.transientBlip
+    : scenarioId === "normal" && tick > 0 && tick % 9 === 0;
+
   const isExtremeTemp = (live?.panelTemp >= 45) || (live?.ambientTemp >= 40);
   const isCloudyOrRain = (live?.irradiance !== undefined && live?.irradiance <= 350);
   const anomalyActive = !usingFallback && backendStatus
