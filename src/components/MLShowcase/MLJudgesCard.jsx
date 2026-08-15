@@ -78,7 +78,7 @@ export default function MLJudgesCard() {
         </div>
         <div>
           <div style={{ fontWeight: 700, fontSize: 14, color: "var(--ink-100)" }}>
-            🏆 ML System — Hackathon Judges Showcase
+            ML Model Performance
           </div>
           <div style={{ fontSize: 11, color: "var(--ink-300)", marginTop: 1 }}>
             Trained with scikit-learn 1.9 on {metrics?.dataset?.total_samples?.toLocaleString() ?? "6,000"} synthetic solar samples
