@@ -25,30 +25,12 @@ body {
   background: radial-gradient(ellipse 900px 500px at 20% -10%, rgba(255, 153, 51, 0.14), transparent 60%),
     radial-gradient(ellipse 900px 600px at 90% 10%, rgba(31, 174, 92, 0.1), transparent 55%), var(--navy-bg);
   color: var(--ink-100);
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 153, 51, 0.4) #0a1626;
+  scrollbar-width: none; /* Firefox */
 }
 
-/* Custom Scrollbar */
+/* Hide scrollbar for Chrome, Safari and Opera */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #0a1626;
-  border-left: 1px solid var(--hairline);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 153, 51, 0.35);
-  border-radius: 4px;
-  border: 1px solid rgba(255, 153, 51, 0.5);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 153, 51, 0.7);
-  box-shadow: 0 0 10px rgba(255, 153, 51, 0.8);
+  display: none;
 }
 
 /* ---------- Brand ---------- */
