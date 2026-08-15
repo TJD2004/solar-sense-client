@@ -108,6 +108,8 @@ export default function TelemetryStream() {
         {"▸ "}
         {scenarioId === "normal" && (t("scenario_normal", "Clear sky") + " — 100%")}
         {scenarioId === "cloudy" && ("⚠ " + t("scenario_cloudy", "Passing Clouds"))}
+        {scenarioId === "rainy" && ("🌧️ " + t("scenario_rainy", "Heavy Rain"))}
+        {scenarioId === "heatwave" && ("🔥 " + t("scenario_heatwave", "Extreme Heatwave"))}
         {scenarioId === "shading" && ("⚠ " + t("scenario_shading", "Afternoon Shading"))}
         {scenarioId === "soiling" && ("⚠ " + t("scenario_soiling", "Panel Dust"))}
         {scenarioId === "inverter" && ("🚨 " + t("scenario_inverter", "Inverter Fault"))}
