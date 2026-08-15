@@ -2,6 +2,8 @@
 
 > **SolarSense Client** is a responsive, real-time React web application designed for intelligent solar energy monitoring, AI performance anomaly detection, appliance load scheduling, and live Digital Twin visualization.
 
+### 🌐 Live Demo: [https://solar-sense-ai.vercel.app](https://solar-sense-ai.vercel.app)
+
 ---
 
 ## ✨ Features
