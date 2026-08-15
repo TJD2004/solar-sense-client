@@ -14,6 +14,8 @@ import { callOrFallback, analyzePerformance } from "../../services/api.js";
 import { useSimulation } from "../../context/SimulationContext.jsx";
 import { useLanguage } from "../../i18n/LanguageContext.jsx";
 
+import VoiceSummaryButton from "../../components/common/VoiceSummaryButton.jsx";
+
 export default function Dashboard() {
   const { initializing, offline, toggleOffline, live, curve, healthScore, anomalyActive, scenario } = useSimulation();
   const { t } = useLanguage();
@@ -58,6 +60,8 @@ export default function Dashboard() {
   return (
     <div>
       <div>
+        <VoiceSummaryButton />
+
         {anomalyActive && (
           <div className="anomaly-banner" role="status">
             <AlertTriangle size={16} aria-hidden="true" />

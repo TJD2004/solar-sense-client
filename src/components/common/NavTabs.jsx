@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, BarChart3, CloudSun, CalendarClock, SlidersHorizontal, MessageCircle } from "lucide-react";
+import { LayoutDashboard, BarChart3, CloudSun, CalendarClock, Landmark, SlidersHorizontal, MessageCircle } from "lucide-react";
 import { useLanguage } from "../../i18n/LanguageContext.jsx";
 
 export default function NavTabs() {
@@ -11,6 +11,7 @@ export default function NavTabs() {
     { to: "/analytics", label: t("nav_analytics", "Analytics"), icon: BarChart3 },
     { to: "/forecast", label: t("nav_forecast", "Forecast"), icon: CloudSun },
     { to: "/scheduler", label: t("nav_scheduler", "AI Scheduler"), icon: CalendarClock },
+    { to: "/subsidy", label: t("nav_subsidy", "Govt Subsidy"), icon: Landmark },
     { to: "/simulator", label: t("nav_simulator", "Control Room"), icon: SlidersHorizontal },
     { to: "/copilot", label: t("nav_copilot", "AI Copilot"), icon: MessageCircle },
   ];

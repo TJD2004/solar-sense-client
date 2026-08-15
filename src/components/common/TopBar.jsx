@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Sun, Moon, Globe } from "lucide-react";
 import { useSimulation } from "../../context/SimulationContext.jsx";
 import { useLanguage } from "../../i18n/LanguageContext.jsx";
+import { NotificationBell } from "./NotificationDrawer.jsx";
 
 export default function TopBar() {
   const { connection } = useSimulation();
@@ -64,8 +65,11 @@ export default function TopBar() {
         </div>
       </div>
 
-      {/* Connection Status Badge, Theme Toggle & Language Selector */}
+      {/* Connection Status Badge, Notification Bell, Theme Toggle & Language Selector */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+        {/* Notification Bell Badge */}
+        <NotificationBell />
+
         {/* Theme Toggle Button */}
         <button
           type="button"
