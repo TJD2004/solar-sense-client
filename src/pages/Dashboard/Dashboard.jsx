@@ -15,6 +15,8 @@ import { useSimulation } from "../../context/SimulationContext.jsx";
 import { useLanguage } from "../../i18n/LanguageContext.jsx";
 
 import VoiceSummaryButton from "../../components/common/VoiceSummaryButton.jsx";
+import MLPredictionCard from "../../components/MLShowcase/MLPredictionCard.jsx";
+import MLJudgesCard from "../../components/MLShowcase/MLJudgesCard.jsx";
 
 export default function Dashboard() {
   const { initializing, offline, toggleOffline, live, curve, healthScore, anomalyActive, scenario } = useSimulation();
@@ -125,11 +127,20 @@ export default function Dashboard() {
           source={insight?.source}
           loading={insightLoading}
         />
+
+        {/* ML Prediction + Hackathon Judges Showcase */}
+        <div
+          className="ml-grid"
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, marginTop: 18 }}
+        >
+          <MLPredictionCard />
+          <MLJudgesCard />
+        </div>
       </div>
 
       <style>{`
         @media (max-width: 820px) {
-          .hero-grid, .mid-grid { grid-template-columns: 1fr !important; }
+          .hero-grid, .mid-grid, .ml-grid { grid-template-columns: 1fr !important; }
         }
         @media (max-width: 560px) {
           .hero-grid .panel > div[style*="repeat(4,1fr)"] { grid-template-columns: repeat(2,1fr) !important; }

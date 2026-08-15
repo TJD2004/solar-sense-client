@@ -202,6 +202,9 @@ export function NotificationProvider({ children }) {
     }
   }, [live?.gridNet, addNotification, t]);
 
+  // 7. ML Prediction Anomaly — fired externally via addNotification from MLPredictionCard
+  // (The card calls addNotification when deviation > 20% is detected. No polling here.)
+
   // Actions
   const markAsRead = (id) => {
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
