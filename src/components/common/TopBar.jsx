@@ -1,11 +1,23 @@
-import React from "react";
-import { Sun, Globe } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Sun, Moon, Globe } from "lucide-react";
 import { useSimulation } from "../../context/SimulationContext.jsx";
 import { useLanguage } from "../../i18n/LanguageContext.jsx";
 
 export default function TopBar() {
   const { connection } = useSimulation();
   const { language, setLanguage, languages, t } = useLanguage();
+
+  const [theme, setTheme] = useState(() => localStorage.getItem("solarsense_theme") || "dark");
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    document.body.setAttribute("data-theme", theme);
+    localStorage.setItem("solarsense_theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
 
   const CONNECTION_LABEL = {
     standalone: t("conn_standalone", "SIMULATED"),
@@ -52,10 +64,34 @@ export default function TopBar() {
         </div>
       </div>
 
-      {/* Connection Status Badge & Language Selector */}
-      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+      {/* Connection Status Badge, Theme Toggle & Language Selector */}
+      <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+        {/* Theme Toggle Button */}
+        <button
+          type="button"
+          onClick={toggleTheme}
+          title={theme === "dark" ? t("theme_light", "Switch to Light Theme") : t("theme_dark", "Switch to Dark Theme")}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            background: theme === "light" ? "rgba(234, 88, 12, 0.12)" : "rgba(255, 255, 255, 0.04)",
+            padding: "5px 11px",
+            borderRadius: 8,
+            border: "1px solid var(--hairline)",
+            color: theme === "light" ? "var(--saffron)" : "var(--ink-100)",
+            cursor: "pointer",
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 12,
+            fontWeight: 600,
+          }}
+        >
+          {theme === "dark" ? <Sun size={15} color="var(--saffron)" /> : <Moon size={15} color="var(--saffron)" />}
+          <span>{theme === "dark" ? t("light_mode", "Light Mode") : t("dark_mode", "Dark Mode")}</span>
+        </button>
+
         {/* Language Selector Dropdown */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6, background: "rgba(255, 255, 255, 0.04)", padding: "4px 10px", borderRadius: 8, border: "1px solid var(--hairline)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, background: theme === "light" ? "#f1f5f9" : "rgba(255, 255, 255, 0.04)", padding: "4px 10px", borderRadius: 8, border: "1px solid var(--hairline)" }}>
           <Globe size={15} color="var(--chakra-blue-light)" />
           <select
             value={language}
@@ -72,7 +108,7 @@ export default function TopBar() {
             }}
           >
             {languages.map((lang) => (
-              <option key={lang.code} value={lang.code} style={{ background: "#0D1B2A", color: "#FFFFFF" }}>
+              <option key={lang.code} value={lang.code} style={{ background: theme === "light" ? "#FFFFFF" : "#0D1B2A", color: theme === "light" ? "#0F172A" : "#FFFFFF" }}>
                 {lang.flag} {lang.name}
               </option>
             ))}

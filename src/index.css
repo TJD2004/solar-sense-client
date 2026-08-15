@@ -19,6 +19,73 @@
   --ink-500: #728199;
 }
 
+:root[data-theme="light"],
+body[data-theme="light"] {
+  --navy-bg: #f8fafc;
+  --navy-panel: #ffffff;
+  --navy-panel-2: #f1f5f9;
+  --hairline: #e2e8f0;
+  --ink-100: #0d1b2a;
+  --ink-300: #334155;
+  --ink-500: #64748b;
+  --chakra-blue: #1e3a8a;
+  --chakra-blue-light: #2563eb;
+  --saffron: #ea580c;
+  --saffron-deep: #d97706;
+  --india-green: #16a34a;
+}
+
+body[data-theme="light"] {
+  background: radial-gradient(ellipse 900px 500px at 20% -10%, rgba(255, 153, 51, 0.12), transparent 60%),
+    radial-gradient(ellipse 900px 600px at 90% 10%, rgba(31, 174, 92, 0.1), transparent 55%), #f8fafc;
+  color: var(--ink-100);
+}
+
+[data-theme="light"] .panel {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .stat-tile,
+[data-theme="light"] .telem-field {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] .ss-chip {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+[data-theme="light"] .ss-chip[data-active] {
+  border-color: var(--saffron);
+  background: rgba(234, 88, 12, 0.12);
+  color: var(--saffron);
+}
+
+[data-theme="light"] .ss-btn-ghost {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: var(--ink-100);
+}
+
+[data-theme="light"] .node-panel {
+  fill: #ffffff;
+  stroke: var(--chakra-blue-light);
+}
+
+[data-theme="light"] .node-generic {
+  fill: #f1f5f9;
+  stroke: #cbd5e1;
+}
+
+[data-theme="light"] .chakra-hub {
+  fill: #ffffff;
+  stroke: #cbd5e1;
+}
+
 body {
   margin: 0;
   font-family: "Inter", sans-serif;

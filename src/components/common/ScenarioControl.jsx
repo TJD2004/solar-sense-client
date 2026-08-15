@@ -18,6 +18,8 @@ export default function ScenarioControl() {
     shading: t("scenario_shading", "Afternoon Shading"),
     soiling: t("scenario_soiling", "Panel Dust"),
     inverter: t("scenario_inverter", "Inverter Fault"),
+    rainy: t("scenario_rainy", "Heavy Rain"),
+    heatwave: t("scenario_heatwave", "Extreme Heatwave"),
   };
 
   return (
@@ -52,7 +54,7 @@ export default function ScenarioControl() {
           style={{ marginLeft: "auto" }}
         >
           {offline ? <WifiOff size={13} /> : <Wifi size={13} />}
-          {offline ? "Meter offline" : "Simulate connection drop"}
+          {offline ? t("meter_offline", "Meter offline") : t("simulate_drop", "Simulate connection drop")}
         </button>
       </div>
 
@@ -70,7 +72,7 @@ export default function ScenarioControl() {
               marginBottom: 8,
             }}
           >
-            <History size={12} /> Event log
+            <History size={12} /> {t("event_log_title", "Event log")}
           </div>
           <ul className="ss-event-log">
             {eventLog.map((e) => {
@@ -80,6 +82,21 @@ export default function ScenarioControl() {
               else if (msgStr.includes("Meter back online")) msgStr = t("meter_online_msg", "Meter back online");
               else if (msgStr.includes("Live feed unavailable")) msgStr = t("feed_unavailable_msg", "Live feed unavailable — showing local simulation");
               else if (msgStr.includes("Live connection lost")) msgStr = t("connection_lost_msg", "Live connection lost — reconnecting…");
+              else if (msgStr.includes("triggered")) {
+                const parts = msgStr.split(" triggered");
+                const rawName = parts[0];
+                let labelKey = "scenario_normal";
+                if (rawName.includes("Cloudy")) labelKey = "scenario_cloudy";
+                else if (rawName.includes("Shading")) labelKey = "scenario_shading";
+                else if (rawName.includes("Dust") || rawName.includes("Soiling")) labelKey = "scenario_soiling";
+                else if (rawName.includes("Inverter")) labelKey = "scenario_inverter";
+                else if (rawName.includes("Rain")) labelKey = "scenario_rainy";
+                else if (rawName.includes("Heatwave")) labelKey = "scenario_heatwave";
+
+                const scenarioTranslated = t(labelKey, rawName);
+                const suffix = t("triggered_suffix", "triggered");
+                msgStr = `${scenarioTranslated} ${suffix}`;
+              }
 
               return (
                 <li key={e.id}>

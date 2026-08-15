@@ -1,5 +1,6 @@
 import React from "react";
 import { WifiOff, RefreshCw, Inbox } from "lucide-react";
+import { useLanguage } from "../../i18n/LanguageContext.jsx";
 
 export function Skeleton({ height = 16, width = "100%", radius = 6, style }) {
   return (
@@ -25,38 +26,43 @@ export function PanelSkeleton({ rows = 3, title = true }) {
   );
 }
 
-export function ErrorState({
-  title = "Couldn't reach the solar meter",
-  message = "The live feed is unavailable right now. This won't affect stored history.",
-  onRetry,
-}) {
+export function ErrorState({ title, message, onRetry }) {
+  const { t } = useLanguage();
+  const displayTitle = title || t("err_reach_meter", "Couldn't reach the solar meter");
+  const displayMessage =
+    message || t("err_feed_unavailable", "The live feed is unavailable right now. This won't affect stored history.");
+
   return (
     <div className="panel" role="alert" style={{ display: "flex", alignItems: "center", gap: 14 }}>
       <div className="insight-icon" style={{ background: "rgba(255,122,26,0.14)" }}>
         <WifiOff size={18} color="var(--saffron-deep)" />
       </div>
       <div style={{ flex: 1 }}>
-        <div className="insight-title">{title}</div>
-        <div className="insight-body">{message}</div>
+        <div className="insight-title">{displayTitle}</div>
+        <div className="insight-body">{displayMessage}</div>
       </div>
       {onRetry && (
-        <button type="button" onClick={onRetry} className="ss-btn-ghost" aria-label="Retry connecting to the solar meter">
-          <RefreshCw size={14} /> Retry
+        <button type="button" onClick={onRetry} className="ss-btn-ghost" aria-label={t("btn_retry", "Retry")}>
+          <RefreshCw size={14} /> {t("btn_retry", "Retry")}
         </button>
       )}
     </div>
   );
 }
 
-export function EmptyState({ title = "Nothing here yet", message = "Data will show up here once it's available." }) {
+export function EmptyState({ title, message }) {
+  const { t } = useLanguage();
+  const displayTitle = title || t("empty_title", "Nothing here yet");
+  const displayMessage = message || t("empty_msg", "Data will show up here once it's available.");
+
   return (
     <div className="panel" style={{ display: "flex", alignItems: "center", gap: 14 }}>
       <div className="insight-icon" style={{ background: "rgba(91,156,232,0.14)" }}>
         <Inbox size={18} color="var(--chakra-blue-light)" />
       </div>
       <div>
-        <div className="insight-title">{title}</div>
-        <div className="insight-body">{message}</div>
+        <div className="insight-title">{displayTitle}</div>
+        <div className="insight-body">{displayMessage}</div>
       </div>
     </div>
   );

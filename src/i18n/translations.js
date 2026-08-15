@@ -17,6 +17,30 @@ export const translations = {
     conn_reconnecting: "RECONNECTING...",
     select_language: "Language",
 
+    // Theme & UI Controls
+    theme_light: "Switch to Light Theme",
+    theme_dark: "Switch to Dark Theme",
+    light_mode: "Light Mode",
+    dark_mode: "Dark Mode",
+
+    // Offline & Error States
+    err_reach_meter: "Couldn't reach the solar meter",
+    err_feed_unavailable: "The live feed is unavailable right now. This won't affect stored history.",
+    btn_retry: "Retry",
+    empty_title: "Nothing here yet",
+    empty_msg: "Data will show up here once it's available.",
+
+    // Scenario Control & Event Log
+    simulate_drop: "Simulate connection drop",
+    meter_offline: "Meter offline",
+    event_log_title: "Event log",
+    anomaly_detected_msg: "Production anomaly detected",
+    meter_dropped_msg: "Meter connection dropped",
+    meter_online_msg: "Meter back online",
+    feed_unavailable_msg: "Live feed unavailable — showing local simulation",
+    connection_lost_msg: "Live connection lost — reconnecting…",
+    triggered_suffix: "triggered",
+
     // Stat Tiles & Dashboard
     solar_generation: "Solar Generation",
     home_consumption: "Home Consumption",
@@ -144,6 +168,30 @@ export const translations = {
     conn_reconnecting: "पुनः कनेक्ट हो रहा है...",
     select_language: "भाषा",
 
+    // Theme & UI Controls
+    theme_light: "लाइट थीम पर स्विच करें",
+    theme_dark: "डार्क थीम पर स्विच करें",
+    light_mode: "लाइट मोड",
+    dark_mode: "डार्क मोड",
+
+    // Offline & Error States
+    err_reach_meter: "सोलर मीटर से संपर्क नहीं हो सका",
+    err_feed_unavailable: "लाइव फीड अभी उपलब्ध नहीं है। इससे पुराना डेटा प्रभावित नहीं होगा।",
+    btn_retry: "पुनः प्रयास करें",
+    empty_title: "यहाँ अभी कुछ नहीं है",
+    empty_msg: "डेटा उपलब्ध होते ही यहाँ दिखाई देगा।",
+
+    // Scenario Control & Event Log
+    simulate_drop: "कनेक्शन ड्रॉप सिम्युलेट करें",
+    meter_offline: "मीटर ऑफलाईन",
+    event_log_title: "इवेंट लॉग",
+    anomaly_detected_msg: "उत्पादन विसंगति पाई गई",
+    meter_dropped_msg: "मीटर कनेक्शन बंद हो गया",
+    meter_online_msg: "मीटर फिर से ऑनलाइन है",
+    feed_unavailable_msg: "लाइव फीड अनुपलब्ध है — स्थानीय सिमुलेशन दिखाया जा रहा है",
+    connection_lost_msg: "लाइव कनेक्शन टूट गया — पुनः कनेक्ट हो रहा है…",
+    triggered_suffix: "चालू हुआ",
+
     // Stat Tiles & Dashboard
     solar_generation: "सौर उत्पादन",
     home_consumption: "घरेलू खपत",
@@ -270,6 +318,30 @@ export const translations = {
     conn_fallback: "स्थानिक फॉलबॅक",
     conn_reconnecting: "पुन्हा जोडणी होत आहे...",
     select_language: "भाषा",
+
+    // Theme & UI Controls
+    theme_light: "लाइट थीमवर स्विच करा",
+    theme_dark: "डार्क थीमवर स्विच करा",
+    light_mode: "लाइट मोड",
+    dark_mode: "डार्क मोड",
+
+    // Offline & Error States
+    err_reach_meter: "सोलर मीटरशी संपर्क होऊ शकला नाही",
+    err_feed_unavailable: "लाइव्ह फीड सध्या उपलब्ध नाही. यामुळे साठवलेल्या डेटावर परिणाम होणार नाही.",
+    btn_retry: "पुन्हा प्रयत्न करा",
+    empty_title: "येथे अद्याप काहीही नाही",
+    empty_msg: "डेटा उपलब्ध झाल्यावर येथे दिसेल.",
+
+    // Scenario Control & Event Log
+    simulate_drop: "कनेक्शन ड्रॉप सिम्युलेट करा",
+    meter_offline: "मीटर ऑफलाईन",
+    event_log_title: "इव्हेंट लॉग",
+    anomaly_detected_msg: "उत्पादन विसंगती आढळली",
+    meter_dropped_msg: "मीटर कनेक्शन तुटले",
+    meter_online_msg: "मीटर पुन्हा ऑनलाइन झाले",
+    feed_unavailable_msg: "लाइव्ह फीड उपलब्ध नाही — स्थानिक सिम्युलेशन दाखवत आहे",
+    connection_lost_msg: "लाइव्ह कनेक्शन तुटले — पुन्हा कनेक्ट करत आहे…",
+    triggered_suffix: "सुरू झाले",
 
     // Stat Tiles & Dashboard
     solar_generation: "सौर ऊर्जा निर्मिती",
