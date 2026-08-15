@@ -48,6 +48,31 @@ export default function Forecast() {
         </p>
       </div>
 
+      {/* Weather & Solar Advisory Alert */}
+      <div
+        className="panel"
+        style={{
+          marginBottom: 18,
+          background: "rgba(31, 174, 92, 0.08)",
+          borderColor: "rgba(31, 174, 92, 0.3)",
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+        }}
+      >
+        <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(31, 174, 92, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <Sun size={20} color="var(--india-green)" />
+        </div>
+        <div>
+          <div style={{ fontWeight: 600, fontSize: 13, color: "var(--india-green)" }}>
+            ☀️ {t("forecast_alert_title", "High Solar Generation Advisory")}
+          </div>
+          <div style={{ fontSize: 12, color: "var(--ink-300)", marginTop: 2 }}>
+            {t("forecast_alert_body", "Favorable weather conditions predicted for the next 48 hours. Expect 100% baseline clear-sky production.")}
+          </div>
+        </div>
+      </div>
+
       <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 18, marginBottom: 18 }}>
         <div className="panel">
           <div className="panel-title">

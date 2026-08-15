@@ -65,7 +65,17 @@ export default function Dashboard() {
         {anomalyActive && (
           <div className="anomaly-banner" role="status">
             <AlertTriangle size={16} aria-hidden="true" />
-            {scenario.id === "normal"
+            {scenario.id === "inverter"
+              ? `🚨 ${t("alert_inverter", "Inverter Hardware Failure")} — ${t("inverter_halted", "Power generation halted. Hardware check required.")}`
+              : scenario.id === "soiling"
+              ? `🧹 ${t("alert_soiling", "Panel Soiling & Dust Alert")} — ${t("soiling_desc_banner", "Dust buildup is reducing panel absorption. Cleaning recommended.")}`
+              : scenario.id === "shading"
+              ? `🌳 ${t("alert_shading", "Array Shading Alert")} — ${t("shading_desc_banner", "Partial tree or structure shadow obstructing solar array.")}`
+              : (live?.panelTemp >= 45 || live?.ambientTemp >= 40)
+              ? `🔥 ${t("alert_temp_high", "High Panel Temperature Alert")} — ${live?.panelTemp ?? live?.ambientTemp}°C (${t("thermal_loss", "Thermal Efficiency Degradation")})`
+              : (live?.irradiance <= 350)
+              ? `☁️ ${t("alert_cloudy", "Cloud Cover / Low Irradiance Alert")} — ${live?.irradiance} W/m²`
+              : scenario.id === "normal"
               ? t("anomaly_normal", "Production anomaly detected — output dropped sharply in the last interval.")
               : `${scenario.emoji} ${t("anomaly_detected", "Production anomaly detected")} — ${scenario.label}`}
           </div>
