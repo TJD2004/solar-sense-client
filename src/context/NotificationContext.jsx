@@ -234,7 +234,7 @@ export function NotificationProvider({ children }) {
     } else if (!isImportingHigh) {
       prevGridHighRef.current = false;
     }
-  }, [live?.gridNet, addNotification]);ddNotification, t]);
+  }, [live?.gridNet, addNotification]);
 
   // 7. ML Prediction Anomaly — fired externally via addNotification from MLPredictionCard
   // (The card calls addNotification when deviation > 20% is detected. No polling here.)
