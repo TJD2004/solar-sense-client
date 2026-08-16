@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Volume2, VolumeX, Sparkles, ChevronDown, ChevronUp, Play, Square } from "lucide-react";
 import { useSimulation } from "../../context/SimulationContext.jsx";
 import { useLanguage } from "../../i18n/LanguageContext.jsx";
+import { API_BASE_URL } from "../../services/api.js";
 
 export default function VoiceSummaryButton() {
   const { live, healthScore, scenario, anomalyActive } = useSimulation();
@@ -230,7 +231,7 @@ export default function VoiceSummaryButton() {
         }
 
         const sentence = sentences[index];
-        const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${langCode}&client=tw-ob&q=${encodeURIComponent(sentence)}`;
+        const url = `${API_BASE_URL}/api/ai/tts?text=${encodeURIComponent(sentence)}&lang=${langCode}`;
         const audio = new Audio(url);
         audioRef.current = audio;
 
