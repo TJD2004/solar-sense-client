@@ -11,6 +11,7 @@ export default function VoiceSummaryButton() {
   const [showTranscript, setShowTranscript] = useState(false);
   const [transcript, setTranscript] = useState("");
   const synthRef = useRef(window.speechSynthesis || null);
+  const audioRef = useRef(null);
 
   // Stop speech and reset transcript when language changes
   useEffect(() => {
@@ -18,6 +19,14 @@ export default function VoiceSummaryButton() {
     setSpeaking(false);
     if (synthRef.current) {
       synthRef.current.cancel();
+    }
+    if (audioRef.current) {
+      try {
+        audioRef.current.pause();
+      } catch (e) {
+        // Ignore audio pause errors
+      }
+      audioRef.current = null;
     }
   }, [language]);
 
@@ -119,33 +128,20 @@ export default function VoiceSummaryButton() {
     return text;
   };
 
-  const handleSpeakToggle = () => {
-    if (!synthRef.current) return;
-
-    if (speaking) {
-      synthRef.current.cancel();
+  const playLocalFallback = (text) => {
+    if (!synthRef.current) {
       setSpeaking(false);
       return;
     }
 
-    const textToSpeak = generateSummaryText();
-    setTranscript(textToSpeak);
-
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-
-    // Language voice mapping & explicit browser voice selection (preferring female voice)
+    const utterance = new SpeechSynthesisUtterance(text);
     try {
       const voices = synthRef.current.getVoices() || [];
-      
-      // Print available voices to console for transparent debugging
-      console.log("[VoiceSummary] Total available voices on this device:", voices.map((v) => `${v.name} (${v.lang})`));
-      
       let selectedVoice = null;
 
       if (language === "hi") {
         utterance.lang = "hi-IN";
         const hiVoices = voices.filter((v) => v.lang === "hi-IN" || v.lang.toLowerCase().startsWith("hi"));
-        // Prefer Microsoft Swara, Microsoft Kalpana, Google, or anything containing female
         selectedVoice = hiVoices.find((v) => 
           v.name.includes("Swara") || 
           v.name.includes("Kalpana") || 
@@ -155,7 +151,6 @@ export default function VoiceSummaryButton() {
       } else if (language === "mr") {
         utterance.lang = "mr-IN";
         const mrVoices = voices.filter((v) => v.lang === "mr-IN" || v.lang.toLowerCase().startsWith("mr"));
-        // Prefer Microsoft Aarohi, Google Marathi, or anything containing female
         selectedVoice = mrVoices.find((v) => 
           v.name.includes("Aarohi") || 
           v.name.toLowerCase().includes("female") || 
@@ -164,7 +159,6 @@ export default function VoiceSummaryButton() {
       } else {
         utterance.lang = "en-IN";
         const enVoices = voices.filter((v) => v.lang === "en-IN" || v.lang.toLowerCase().startsWith("en"));
-        // Prefer Microsoft Heera, Microsoft Zira, Google, or any female voice
         selectedVoice = enVoices.find((v) => 
           v.name.includes("Heera") || 
           v.name.includes("Zira") || 
@@ -174,24 +168,92 @@ export default function VoiceSummaryButton() {
       }
 
       if (selectedVoice) {
-        console.log(`[VoiceSummary] Selected voice: ${selectedVoice.name} (${selectedVoice.lang})`);
+        console.log(`[VoiceSummary] Fallback selected voice: ${selectedVoice.name} (${selectedVoice.lang})`);
         utterance.voice = selectedVoice;
-      } else {
-        console.warn(`[VoiceSummary] No matching voice found for language: ${language}. Falling back to default system voice.`);
       }
     } catch (err) {
-      console.warn("[VoiceSummary] Voice selection failed:", err);
+      console.warn("[VoiceSummary] Fallback voice selection failed:", err);
     }
 
     utterance.rate = 1.0;
     utterance.pitch = 1.0;
-
     utterance.onend = () => setSpeaking(false);
     utterance.onerror = () => setSpeaking(false);
 
-    synthRef.current.cancel(); // clear previous
+    synthRef.current.cancel();
     synthRef.current.speak(utterance);
     setSpeaking(true);
+  };
+
+  const handleSpeakToggle = () => {
+    // 1. If currently speaking, stop everything (local speech and Audio elements)
+    if (speaking) {
+      if (synthRef.current) {
+        synthRef.current.cancel();
+      }
+      if (audioRef.current) {
+        try {
+          audioRef.current.pause();
+        } catch (e) {
+          // Ignore pause errors
+        }
+        audioRef.current = null;
+      }
+      setSpeaking(false);
+      return;
+    }
+
+    const textToSpeak = generateSummaryText();
+    setTranscript(textToSpeak);
+
+    // 2. Play using Google Translate TTS API for natural, human-like female neural voice
+    const langCode = language === "hi" ? "hi" : language === "mr" ? "mr" : "en";
+    
+    // Split text into short chunks for the Google TTS limit (approx 200 chars)
+    // We split by punctuation (। , . ! ?) so sentences are read cleanly with pauses.
+    const sentences = textToSpeak.split(/[।\.!\?]/).map((s) => s.trim()).filter((s) => s.length > 0);
+    
+    if (sentences.length > 0) {
+      setSpeaking(true);
+      let index = 0;
+      
+      const playNext = () => {
+        // If user stopped speech during play, terminate sequence
+        if (audioRef.current === null && index > 0) {
+          setSpeaking(false);
+          return;
+        }
+
+        if (index >= sentences.length) {
+          setSpeaking(false);
+          return;
+        }
+
+        const sentence = sentences[index];
+        const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${langCode}&client=tw-ob&q=${encodeURIComponent(sentence)}`;
+        const audio = new Audio(url);
+        audioRef.current = audio;
+
+        audio.onended = () => {
+          index++;
+          playNext();
+        };
+
+        audio.onerror = (e) => {
+          console.warn("[VoiceSummary] Google TTS segment failed. Falling back to local synthesis:", e);
+          playLocalFallback(textToSpeak);
+        };
+
+        audio.play().catch((err) => {
+          console.warn("[VoiceSummary] Audio play call failed. Falling back to local synthesis:", err);
+          playLocalFallback(textToSpeak);
+        });
+      };
+
+      playNext();
+    } else {
+      playLocalFallback(textToSpeak);
+    }
   };
 
   return (
