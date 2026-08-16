@@ -328,6 +328,14 @@ export const translations = {
     capacity_lbl: "Capacity",
     daily_generation_lbl: "Daily generation",
     monthly_savings_lbl: "Monthly savings",
+    forecast_title: "Solar Production Forecast",
+    forecast_subtitle: "AI-powered 7-day expected solar production forecast.",
+    forecast_alert_title: "High Solar Generation Advisory",
+    forecast_alert_body: "Favorable weather conditions predicted for the next 48 hours. Expect 100% baseline clear-sky production.",
+    today_curve_title: "Next Few Hours",
+    expected_sky: "Expected",
+    tomorrow_forecast: "Tomorrow",
+    weekly_forecast: "7-Day Expected Output",
   },
 
   hi: {
@@ -659,6 +667,14 @@ export const translations = {
     capacity_lbl: "क्षमता",
     daily_generation_lbl: "दैनिक उत्पादन",
     monthly_savings_lbl: "मासिक बचत",
+    forecast_title: "सौर उत्पादन पूर्वानुमान",
+    forecast_subtitle: "एआई-संचालित 7-दिवसीय अपेक्षित सौर उत्पादन पूर्वानुमान।",
+    forecast_alert_title: "उच्च सौर उत्पादन सलाह",
+    forecast_alert_body: "अगले 48 घंटों के लिए अनुकूल मौसम की भविष्यवाणी की गई है। 100% बेसलाइन स्पष्ट-आसमान उत्पादन की उम्मीद करें।",
+    today_curve_title: "अगले कुछ घंटे",
+    expected_sky: "अपेक्षित",
+    tomorrow_forecast: "कल",
+    weekly_forecast: "7-दिवसीय अपेक्षित उत्पादन",
   },
 
   mr: {
@@ -990,5 +1006,13 @@ export const translations = {
     capacity_lbl: "क्षमता",
     daily_generation_lbl: "दैनंदिन निर्मिती",
     monthly_savings_lbl: "मासिक बचत",
+    forecast_title: "सौर निर्मिती अंदाज",
+    forecast_subtitle: "एआय-आधारित 7-दिवसीय अपेक्षित सौर निर्मिती अंदाज.",
+    forecast_alert_title: "उच्च सौर निर्मिती सल्ला",
+    forecast_alert_body: "पुढील 48 तासांसाठी अनुकूल हवामानाचा अंदाज आहे. 100% बेसलाइन स्पष्ट-आकाश निर्मितीची अपेक्षा करा.",
+    today_curve_title: "पुढील काही तास",
+    expected_sky: "अपेक्षित",
+    tomorrow_forecast: "उद्या",
+    weekly_forecast: "7-दिवसीय अपेक्षित निर्मिती",
   },
 };
