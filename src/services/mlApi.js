@@ -1,6 +1,6 @@
 import { callOrFallback } from "./api.js";
 
-const BASE = import.meta.env.VITE_API_BASE_URL || "";
+const BASE = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? "" : "https://solar-sense-backend-8rsi.onrender.com");
 
 /**
  * Fetch real-time ML solar generation prediction from the backend.

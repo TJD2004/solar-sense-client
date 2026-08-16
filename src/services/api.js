@@ -6,7 +6,7 @@ import axios from "axios";
 // (e.g. client on Vercel, server on Render — see render.yaml/vercel.json),
 // set VITE_API_BASE_URL to the deployed server's origin and requests go
 // there directly instead, relying on the server's CORS_ORIGIN allowlist.
-const API_BASE_URL = import.meta.env?.VITE_API_BASE_URL || "";
+const API_BASE_URL = import.meta.env?.VITE_API_BASE_URL || (import.meta.env.DEV ? "" : "https://solar-sense-backend-8rsi.onrender.com");
 const api = axios.create({
   baseURL: `${API_BASE_URL}/api`,
   timeout: 8000,
