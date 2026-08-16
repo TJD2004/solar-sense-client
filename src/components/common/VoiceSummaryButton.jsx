@@ -12,11 +12,13 @@ export default function VoiceSummaryButton() {
   const [transcript, setTranscript] = useState("");
   const synthRef = useRef(window.speechSynthesis || null);
 
-  // Stop speech when component unmounts or language changes
+  // Stop speech and reset transcript when language changes
   useEffect(() => {
-    return () => {
-      if (synthRef.current) synthRef.current.cancel();
-    };
+    setTranscript("");
+    setSpeaking(false);
+    if (synthRef.current) {
+      synthRef.current.cancel();
+    }
   }, [language]);
 
   // Construct text summary dynamically based on current live state & language
@@ -124,13 +126,27 @@ export default function VoiceSummaryButton() {
 
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
 
-    // Language voice mapping
-    if (language === "hi") {
-      utterance.lang = "hi-IN";
-    } else if (language === "mr") {
-      utterance.lang = "mr-IN";
-    } else {
-      utterance.lang = "en-IN";
+    // Language voice mapping & explicit browser voice selection
+    try {
+      const voices = synthRef.current.getVoices() || [];
+      let selectedVoice = null;
+
+      if (language === "hi") {
+        utterance.lang = "hi-IN";
+        selectedVoice = voices.find((v) => v.lang === "hi-IN" || v.lang.startsWith("hi"));
+      } else if (language === "mr") {
+        utterance.lang = "mr-IN";
+        selectedVoice = voices.find((v) => v.lang === "mr-IN" || v.lang.startsWith("mr"));
+      } else {
+        utterance.lang = "en-IN";
+        selectedVoice = voices.find((v) => v.lang === "en-IN" || v.lang.startsWith("en"));
+      }
+
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+    } catch (err) {
+      console.warn("[VoiceSummary] Voice selection failed:", err);
     }
 
     utterance.rate = 1.0;
