@@ -117,7 +117,7 @@ export default function Scheduler() {
               <div>
                 <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: 15 }}>{a.name}</div>
                 <div style={{ fontSize: 12, color: "var(--ink-500)", marginTop: 2 }}>
-                  {a.powerKW} kW &middot; {a.durationHours} hr run
+                  {t("appliance_details", "{power} kW · {duration} hr run").replace("{power}", a.powerKW).replace("{duration}", a.durationHours)}
                 </div>
               </div>
               <div style={{ display: "flex", gap: 22, flexWrap: "wrap" }}>

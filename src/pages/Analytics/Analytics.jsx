@@ -88,9 +88,9 @@ export default function Analytics() {
                 </linearGradient>
               </defs>
               <CartesianGrid stroke="#1B2C45" vertical={false} />
-              <XAxis dataKey="label" stroke="#728199" fontSize={11} tickLine={false} axisLine={false} interval={Math.ceil(points.length / 10) - 1} />
+              <XAxis dataKey="label" stroke="#728199" fontSize={11} tickLine={false} axisLine={false} interval={Math.ceil(points.length / 10) - 1} tickFormatter={(tick) => t(tick, tick)} />
               <YAxis stroke="#728199" fontSize={11} tickLine={false} axisLine={false} width={34} />
-              <Tooltip contentStyle={{ background: "#0F2038", border: "1px solid #22344E", borderRadius: 10, fontSize: 12 }} labelStyle={{ color: "#AFC0D6" }} />
+              <Tooltip contentStyle={{ background: "#0F2038", border: "1px solid #22344E", borderRadius: 10, fontSize: 12 }} labelStyle={{ color: "#AFC0D6" }} labelFormatter={(label) => t(label, label)} />
               <Legend wrapperStyle={{ fontSize: 11, color: "#728199" }} />
               <Area type="monotone" dataKey="generation" stroke="#FF9933" fill="url(#histGenFill)" strokeWidth={2} name={`${t("solar_generation", "Generation")} (kWh)`} />
               <Area type="monotone" dataKey="consumption" stroke="#5B9CE8" fill="url(#histConFill)" strokeWidth={2} name={`${t("home_consumption", "Consumption")} (kWh)`} />

@@ -115,9 +115,9 @@ export default function Forecast() {
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={week} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
               <CartesianGrid stroke="#1B2C45" vertical={false} />
-              <XAxis dataKey="label" stroke="#728199" fontSize={11} tickLine={false} axisLine={false} />
+              <XAxis dataKey="label" stroke="#728199" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(tick) => t(tick, tick)} />
               <YAxis stroke="#728199" fontSize={11} tickLine={false} axisLine={false} width={34} />
-              <Tooltip contentStyle={{ background: "#0F2038", border: "1px solid #22344E", borderRadius: 10, fontSize: 12 }} labelStyle={{ color: "#AFC0D6" }} />
+              <Tooltip contentStyle={{ background: "#0F2038", border: "1px solid #22344E", borderRadius: 10, fontSize: 12 }} labelStyle={{ color: "#AFC0D6" }} labelFormatter={(label) => t(label, label)} />
               <Bar dataKey="expectedKWh" fill="#5B9CE8" radius={[4, 4, 0, 0]} name={`${t("expected_sky", "Expected")} (kWh)`} />
             </BarChart>
           </ResponsiveContainer>
