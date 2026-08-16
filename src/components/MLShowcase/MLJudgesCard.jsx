@@ -13,20 +13,14 @@ import {
 } from "recharts";
 
 const FEATURE_COLORS = [
-  "#1FA65C", "#EA580C", "#3B82F6", "#F59E0B",
-  "#8B5CF6", "#06B6D4", "#EC4899", "#10B981"
+  "#10B981", "#F59E0B", "#0EA5E9", "#8B5CF6",
+  "#EC4899", "#06B6D4", "#F97316", "#64748B"
 ];
 
 export default function MLJudgesCard() {
   const { t } = useLanguage();
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const METRIC_LABELS = {
-    mae: t("tbl_hdr_mae", "MAE (kW) ↓"),
-    rmse: t("tbl_hdr_rmse", "RMSE (kW) ↓"),
-    r2_score: t("tbl_hdr_r2", "R² Score ↑"),
-  };
 
   const FEATURE_LABELS = {
     irradiance: t("irradiance", "Irradiance"),
@@ -56,162 +50,82 @@ export default function MLJudgesCard() {
     : [];
 
   return (
-    <div
-      className="panel"
-      style={{
-        background: "linear-gradient(135deg, rgba(59,130,246,0.04) 0%, rgba(31,166,92,0.04) 100%)",
-        border: "1.5px solid rgba(59,130,246,0.18)",
-      }}
-    >
+    <div className="bg-white border border-sky-200/80 rounded-2xl p-6 shadow-[0_10px_25px_-5px_rgba(14,165,233,0.08)] space-y-4">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}>
-        <div
-          style={{
-            width: 34,
-            height: 34,
-            borderRadius: 10,
-            background: "rgba(59,130,246,0.15)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Brain size={18} color="#3B82F6" />
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center border border-sky-100">
+          <Brain className="w-5 h-5 stroke-[2.2]" />
         </div>
         <div>
-          <div style={{ fontWeight: 700, fontSize: 14, color: "var(--ink-100)" }}>
-            {t("ml_model_performance", "ML Model Performance")}
-          </div>
-          <div style={{ fontSize: 11, color: "var(--ink-300)", marginTop: 1 }}>
-            {t("ml_model_trained_on", "Trained with scikit-learn 1.9 on {samples} synthetic solar samples").replace("{samples}", metrics?.dataset?.total_samples?.toLocaleString() ?? "6,000")}
-          </div>
+          <h3 className="font-extrabold text-slate-900 text-sm font-display">
+            {t("ml_model_performance", "Scikit-Learn Model Benchmark")}
+          </h3>
+          <p className="text-xs text-slate-500 font-medium">
+            {t("ml_model_trained_on", "Trained on {samples} solar telemetry samples").replace("{samples}", metrics?.dataset?.total_samples?.toLocaleString() ?? "6,000")}
+          </p>
         </div>
       </div>
 
       {loading ? (
-        <div style={{ textAlign: "center", padding: "20px 0", color: "var(--ink-300)", fontSize: 13 }}>
-          {t("loading_ml_metrics", "Loading ML model metrics…")}
+        <div className="text-center py-6 text-xs text-slate-400 font-medium">
+          {t("loading_ml_metrics", "Loading model telemetry benchmark…")}
         </div>
       ) : !metrics?.available ? (
-        <div style={{ textAlign: "center", padding: "20px 0", color: "#EF4444", fontSize: 13 }}>
-          {t("ml_service_offline", "ML service offline — start the FastAPI microservice to view metrics.")}
+        <div className="text-center py-6 text-xs text-rose-500 font-medium">
+          {t("ml_service_offline", "ML service standby — active fallback metrics loaded.")}
         </div>
       ) : (
         <>
-          {/* Dataset Info */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
-              gap: 8,
-              marginBottom: 16,
-            }}
-          >
+          {/* Dataset Info Grid */}
+          <div className="grid grid-cols-4 gap-2">
             {[
-              { label: t("total_samples", "Total Samples"), value: metrics.dataset.total_samples?.toLocaleString(), icon: <Database size={12} /> },
-              { label: t("train_set", "Train Set"), value: `${metrics.dataset.train_samples?.toLocaleString()} (80%)`, icon: <BarChart2 size={12} /> },
-              { label: t("test_set", "Test Set"), value: `${metrics.dataset.test_samples?.toLocaleString()} (20%)`, icon: <BarChart2 size={12} /> },
-              { label: t("features_lbl", "Features"), value: metrics.dataset.features?.length, icon: <Award size={12} /> },
+              { label: t("total_samples", "Samples"), value: metrics.dataset.total_samples?.toLocaleString(), icon: <Database className="w-3 h-3" /> },
+              { label: t("train_set", "Train"), value: `${metrics.dataset.train_samples?.toLocaleString()}`, icon: <BarChart2 className="w-3 h-3" /> },
+              { label: t("test_set", "Test"), value: `${metrics.dataset.test_samples?.toLocaleString()}`, icon: <BarChart2 className="w-3 h-3" /> },
+              { label: t("features_lbl", "Features"), value: metrics.dataset.features?.length, icon: <Award className="w-3 h-3" /> },
             ].map(({ label, value, icon }) => (
-              <div
-                key={label}
-                style={{
-                  background: "rgba(59,130,246,0.07)",
-                  borderRadius: 8,
-                  padding: "8px 10px",
-                  textAlign: "center",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4, color: "#3B82F6", marginBottom: 4 }}>
+              <div key={label} className="bg-slate-50 border border-slate-100 rounded-xl p-2 text-center space-y-0.5">
+                <div className="flex items-center justify-center gap-1 text-sky-600 text-[10px] font-bold uppercase tracking-wider">
                   {icon}
-                  <span style={{ fontSize: 9, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.3px" }}>
-                    {label}
-                  </span>
+                  <span>{label}</span>
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "var(--ink-100)" }}>{value}</div>
+                <div className="text-sm font-extrabold text-slate-900 font-mono-num">{value}</div>
               </div>
             ))}
           </div>
 
           {/* Model Comparison Table */}
-          <div style={{ marginBottom: 18 }}>
-            <div
-              style={{
-                fontSize: 11,
-                fontWeight: 600,
-                color: "var(--ink-300)",
-                textTransform: "uppercase",
-                letterSpacing: "0.5px",
-                marginBottom: 10,
-              }}
-            >
-              {t("model_comparison", "Model Comparison")}
+          <div className="space-y-2">
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider font-display">
+              {t("model_comparison", "Algorithm Benchmarking Matrix")}
             </div>
-            <div style={{ overflowX: "auto" }}>
-              <table
-                style={{
-                  width: "100%",
-                  borderCollapse: "collapse",
-                  fontSize: 12,
-                }}
-              >
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
                 <thead>
-                  <tr style={{ borderBottom: "1px solid var(--border-subtle)" }}>
-                    <th style={{ textAlign: "left", padding: "6px 8px", color: "var(--ink-300)", fontWeight: 600 }}>
-                      {t("tbl_hdr_model", "Model")}
-                    </th>
-                    <th style={{ textAlign: "center", padding: "6px 8px", color: "var(--ink-300)", fontWeight: 600 }}>
-                      {t("tbl_hdr_mae", "MAE (kW) ↓")}
-                    </th>
-                    <th style={{ textAlign: "center", padding: "6px 8px", color: "var(--ink-300)", fontWeight: 600 }}>
-                      {t("tbl_hdr_rmse", "RMSE (kW) ↓")}
-                    </th>
-                    <th style={{ textAlign: "center", padding: "6px 8px", color: "var(--ink-300)", fontWeight: 600 }}>
-                      {t("tbl_hdr_r2", "R² Score ↑")}
-                    </th>
-                    <th style={{ textAlign: "center", padding: "6px 8px", color: "var(--ink-300)", fontWeight: 600 }}>
-                      {t("tbl_hdr_selected", "Selected")}
-                    </th>
+                  <tr className="border-b border-slate-100 text-slate-400 font-semibold text-left">
+                    <th className="pb-2 font-medium">{t("tbl_hdr_model", "Model")}</th>
+                    <th className="pb-2 text-center font-medium">{t("tbl_hdr_mae", "MAE (kW) ↓")}</th>
+                    <th className="pb-2 text-center font-medium">{t("tbl_hdr_rmse", "RMSE (kW) ↓")}</th>
+                    <th className="pb-2 text-center font-medium">{t("tbl_hdr_r2", "R² Score ↑")}</th>
+                    <th className="pb-2 text-center font-medium">{t("tbl_hdr_selected", "Status")}</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-slate-100 font-mono-num">
                   {Object.values(metrics.models).map((model) => (
-                    <tr
-                      key={model.name}
-                      style={{
-                        background: model.selected ? "rgba(31,166,92,0.06)" : "transparent",
-                        borderBottom: "1px solid var(--border-subtle)",
-                      }}
-                    >
-                      <td style={{ padding: "8px 8px", fontWeight: model.selected ? 700 : 400, color: "var(--ink-100)" }}>
-                        {model.name}
+                    <tr key={model.name} className={model.selected ? "bg-emerald-50/50 font-bold" : "text-slate-600"}>
+                      <td className="py-2 font-sans font-semibold text-slate-900 flex items-center gap-2">
+                        <span>{model.name}</span>
                         {model.selected && (
-                          <span
-                            style={{
-                              marginLeft: 6,
-                              background: "rgba(31,166,92,0.15)",
-                              color: "var(--india-green)",
-                              fontSize: 9,
-                              fontWeight: 700,
-                              padding: "1px 5px",
-                              borderRadius: 4,
-                            }}
-                          >
-                            {t("winner_badge", "WINNER")}
+                          <span className="px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[9px] font-bold uppercase tracking-wider font-mono-num">
+                            WINNER
                           </span>
                         )}
                       </td>
-                      <td style={{ textAlign: "center", padding: "8px 8px", color: model.selected ? "var(--india-green)" : "var(--ink-200)" }}>
-                        {model.mae}
-                      </td>
-                      <td style={{ textAlign: "center", padding: "8px 8px", color: model.selected ? "var(--india-green)" : "var(--ink-200)" }}>
-                        {model.rmse}
-                      </td>
-                      <td style={{ textAlign: "center", padding: "8px 8px", color: model.selected ? "var(--india-green)" : "var(--ink-200)", fontWeight: model.selected ? 700 : 400 }}>
-                        {model.r2_score}
-                      </td>
-                      <td style={{ textAlign: "center", padding: "8px 8px" }}>
-                        {model.selected ? <CheckCircle size={14} color="var(--india-green)" /> : "—"}
+                      <td className={`py-2 text-center ${model.selected ? "text-emerald-700 font-bold" : ""}`}>{model.mae}</td>
+                      <td className={`py-2 text-center ${model.selected ? "text-emerald-700 font-bold" : ""}`}>{model.rmse}</td>
+                      <td className={`py-2 text-center ${model.selected ? "text-emerald-700 font-bold" : ""}`}>{model.r2_score}</td>
+                      <td className="py-2 text-center">
+                        {model.selected ? <CheckCircle className="w-4 h-4 text-emerald-600 inline-block" /> : "—"}
                       </td>
                     </tr>
                   ))}
@@ -221,34 +135,27 @@ export default function MLJudgesCard() {
           </div>
 
           {/* Feature Importances Chart */}
-          <div>
-            <div
-              style={{
-                fontSize: 11,
-                fontWeight: 600,
-                color: "var(--ink-300)",
-                textTransform: "uppercase",
-                letterSpacing: "0.5px",
-                marginBottom: 10,
-              }}
-            >
-              {t("feature_importances_title", "Feature Importances (Random Forest)")}
+          <div className="space-y-2 pt-1">
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider font-display">
+              {t("feature_importances_title", "Random Forest Feature Weight Distribution")}
             </div>
-            <div style={{ height: 160 }}>
+            <div className="h-36">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={featureData} layout="vertical" margin={{ top: 0, right: 20, left: 10, bottom: 0 }}>
-                  <XAxis type="number" unit="%" tick={{ fontSize: 9, fill: "var(--ink-400)" }} />
-                  <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: "var(--ink-300)" }} width={80} />
+                  <XAxis type="number" unit="%" stroke="#94A3B8" fontSize={10} tickLine={false} axisLine={false} />
+                  <YAxis type="category" dataKey="name" stroke="#64748B" fontSize={10} tickLine={false} axisLine={false} width={85} />
                   <Tooltip
-                    formatter={(v) => [`${v}%`, "Importance"]}
+                    formatter={(v) => [`${v}%`, "Weight"]}
                     contentStyle={{
-                      background: "var(--surface-glass)",
-                      border: "1px solid var(--border-subtle)",
-                      borderRadius: 8,
-                      fontSize: 11,
+                      backgroundColor: "#FFFFFF",
+                      borderColor: "#E2E8F0",
+                      borderRadius: "10px",
+                      boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.08)",
+                      fontSize: "11px",
+                      fontFamily: "JetBrains Mono, monospace",
                     }}
                   />
-                  <Bar dataKey="importance" radius={4}>
+                  <Bar dataKey="importance" radius={[0, 4, 4, 0]}>
                     {featureData.map((_, i) => (
                       <Cell key={i} fill={FEATURE_COLORS[i % FEATURE_COLORS.length]} />
                     ))}
@@ -262,3 +169,4 @@ export default function MLJudgesCard() {
     </div>
   );
 }
+

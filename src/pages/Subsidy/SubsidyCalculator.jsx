@@ -1,25 +1,17 @@
 import React, { useState, useMemo } from "react";
-import { Landmark, Calculator, Zap, ShieldCheck, IndianRupee, Sun, ArrowRight, ExternalLink, Info, CheckCircle2 } from "lucide-react";
+import { Landmark, Calculator, Zap, ShieldCheck, IndianRupee, Sun, ExternalLink, Info, CheckCircle2, ArrowRight } from "lucide-react";
 import { useLanguage } from "../../i18n/LanguageContext.jsx";
-import StatTile from "../../components/common/StatTile.jsx";
 
 export default function SubsidyCalculator() {
   const { t } = useLanguage();
 
-  // Inputs
-  const [capacityKW, setCapacityKW] = useState(3); // 1 to 10 kW
-  const [monthlyBill, setMonthlyBill] = useState(2500); // INR
-  const [roofArea, setRoofArea] = useState(350); // sq ft
-  const [category, setCategory] = useState("residential"); // "residential" | "ghs"
+  const [capacityKW, setCapacityKW] = useState(3);
+  const [monthlyBill, setMonthlyBill] = useState(2500);
+  const [roofArea, setRoofArea] = useState(350);
+  const [category, setCategory] = useState("residential");
 
-  // Calculation Logic according to PM Surya Ghar: Muft Bijli Yojana Scheme
-  // Official Subsidy Rates for Residential:
-  // - 1 kW to 2 kW: Rs. 30,000 per kW (Max Rs. 60,000)
-  // - 3 kW: Rs. 78,000 total (Rs. 60k for 1-2kW + Rs. 18k for 3rd kW)
-  // - > 3 kW up to 10 kW: Fixed cap of Rs. 78,000
-  // Benchmark cost: ~Rs. 50,000 per kW
   const calculations = useMemo(() => {
-    const costPerKW = 50000; // Rs 50,000 / kW benchmark
+    const costPerKW = 50000;
     const totalCost = capacityKW * costPerKW;
 
     let subsidy = 0;
@@ -27,33 +19,21 @@ export default function SubsidyCalculator() {
       if (capacityKW <= 2) {
         subsidy = capacityKW * 30000;
       } else {
-        subsidy = 60000 + 18000; // Capped at Rs 78,000 for 3 kW and above
+        subsidy = 60000 + 18000;
       }
     } else {
-      // Group Housing Societies (GHS/RWA) - Rs 18,000 per kW up to 500 kW
       subsidy = capacityKW * 18000;
     }
 
     const netCost = Math.max(0, totalCost - subsidy);
-
-    // Generation Estimates: ~1,400 units (kWh) per kW per year
     const annualGenerationKWh = capacityKW * 1400;
     const monthlyGenerationKWh = Math.round(annualGenerationKWh / 12);
-
-    // Savings Estimate: Average Rs 7.50 per unit electricity tariff
     const tariffPerUnit = 7.5;
     const annualSavingsINR = Math.round(annualGenerationKWh * tariffPerUnit);
     const monthlySavingsINR = Math.round(annualSavingsINR / 12);
-
-    // Payback Period (Years)
     const paybackYears = annualSavingsINR > 0 ? (netCost / annualSavingsINR).toFixed(1) : 0;
-
-    // Roof Area Required: ~100 sq ft per 1 kW
     const roofAreaRequired = capacityKW * 100;
     const roofSufficient = roofArea >= roofAreaRequired;
-
-    // Capacity Recommendation from Monthly Bill
-    // Approx 1 kW required for every Rs 1,000 - Rs 1,200 monthly bill
     const recommendedKW = Math.max(1, Math.min(10, Math.ceil(monthlyBill / 1100)));
 
     return {
@@ -71,28 +51,28 @@ export default function SubsidyCalculator() {
     };
   }, [capacityKW, category, monthlyBill, roofArea]);
 
+  const SCHEME_STEPS = [
+    { step: 1, title: "Portal Registration", desc: "Register on PM Surya Ghar portal with DISCOM consumer number." },
+    { step: 2, title: "Feasibility Approval", desc: "DISCOM approves technical rooftop solar feasibility." },
+    { step: 3, title: "Vendor Installation", desc: "Registered vendor installs ALMM certified solar panels & inverter." },
+    { step: 4, title: "Net Metering & Subsidy", desc: "Net meter installed; direct subsidy credited to bank account." },
+  ];
+
   return (
-    <div style={{ display: "grid", gap: 20 }}>
+    <div className="space-y-6">
       {/* Hero Header Banner */}
-      <div
-        className="panel"
-        style={{
-          background: "linear-gradient(135deg, rgba(255, 153, 51, 0.12), rgba(31, 174, 92, 0.1))",
-          borderColor: "rgba(255, 153, 51, 0.3)",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
-          <div style={{ maxWidth: 680 }}>
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255, 153, 51, 0.15)", padding: "4px 10px", borderRadius: 100, fontSize: 11, fontWeight: 700, color: "var(--saffron)", marginBottom: 10 }}>
-              <Landmark size={13} /> {t("scheme_tag", "GOVT OF INDIA SCHEME")}
+      <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)]">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200 mb-2">
+              <Landmark className="w-3.5 h-3.5 text-amber-600" />
+              <span>{t("scheme_tag", "GOVT OF INDIA SCHEME")}</span>
             </div>
-            <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 24, fontWeight: 700, marginBottom: 8, color: "var(--ink-100)" }}>
+            <h1 className="text-2xl font-extrabold text-slate-900 font-display tracking-tight">
               {t("subsidy_hero_title", "PM Surya Ghar: Muft Bijli Yojana Subsidy Calculator")}
             </h1>
-            <p style={{ fontSize: 13, color: "var(--ink-300)", lineHeight: 1.5, margin: 0 }}>
-              {t("subsidy_hero_desc", "Calculate government financial assistance, net installation cost, monthly electricity unit savings, and payback period under the official PM Surya Ghar Solar Rooftop Scheme.")}
+            <p className="text-xs text-slate-500 font-medium mt-1">
+              {t("subsidy_hero_desc", "Calculate government financial assistance, net installation cost, monthly electricity unit savings, and payback period.")}
             </p>
           </div>
 
@@ -100,43 +80,49 @@ export default function SubsidyCalculator() {
             href="https://pmsuryaghar.gov.in"
             target="_blank"
             rel="noopener noreferrer"
-            className="ss-chip"
-            style={{
-              background: "var(--saffron)",
-              color: "#ffffff",
-              border: "none",
-              padding: "10px 16px",
-              fontWeight: 700,
-              textDecoration: "none",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              borderRadius: 10,
-            }}
+            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl flex items-center gap-2 shadow-md shadow-blue-500/20 transition-all shrink-0"
           >
-            <span>{t("btn_apply_portal", "Official Portal")}</span>
-            <ExternalLink size={14} />
+            <span>{t("btn_apply_portal", "Official Govt Portal")}</span>
+            <ExternalLink className="w-4 h-4" />
           </a>
         </div>
       </div>
 
+      {/* Step-by-Step Scheme Progress Tracker */}
+      <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)]">
+        <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wide font-display mb-4 flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-emerald-600" />
+          <span>Step-by-Step Subsidy Disbursement Process Tracker</span>
+        </h3>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {SCHEME_STEPS.map((s, idx) => (
+            <div key={s.step} className="bg-slate-50 border border-slate-200/80 rounded-xl p-4 relative">
+              <div className="w-7 h-7 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center font-mono-num mb-2">
+                0{s.step}
+              </div>
+              <h4 className="text-sm font-bold text-slate-900 font-display">{s.title}</h4>
+              <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">{s.desc}</p>
+              {idx < 3 && <ArrowRight className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 z-10" />}
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Main Interactive Calculator Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.25fr", gap: 20 }}>
-        {/* Controls Column */}
-        <div className="panel" style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-          <div className="panel-title">
-            <Calculator size={14} /> {t("calc_inputs_title", "1. System & Rooftop Specifications")}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Inputs Column */}
+        <div className="lg:col-span-5 bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] space-y-5">
+          <div className="flex items-center gap-2 text-sm font-bold text-slate-800 uppercase tracking-wide font-display">
+            <Calculator className="w-4 h-4 text-amber-500" />
+            <span>Rooftop System Inputs</span>
           </div>
 
           {/* System Capacity Slider */}
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-              <label style={{ fontSize: 13, fontWeight: 600, color: "var(--ink-100)" }}>
-                {t("label_capacity", "Solar System Capacity:")}
-              </label>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: "var(--saffron)", fontSize: 15 }}>
-                {capacityKW} kW
-              </span>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs font-semibold">
+              <span className="text-slate-700">{t("label_capacity", "System Capacity:")}</span>
+              <span className="font-mono-num font-bold text-blue-600 text-base">{capacityKW} kW</span>
             </div>
             <input
               type="range"
@@ -145,62 +131,35 @@ export default function SubsidyCalculator() {
               step={1}
               value={capacityKW}
               onChange={(e) => setCapacityKW(Number(e.target.value))}
-              style={{ width: "100%", accentColor: "var(--saffron)", cursor: "pointer" }}
+              className="w-full accent-blue-600 cursor-pointer"
             />
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "var(--ink-500)", marginTop: 4 }}>
-              <span>1 kW ({t("small_home", "Small Home")})</span>
-              <span>3 kW ({t("recommended", "Recommended")})</span>
-              <span>10 kW ({t("large", "Large")})</span>
+            <div className="flex justify-between text-[11px] text-slate-500 font-medium">
+              <span>1 kW (Small Home)</span>
+              <span>3 kW (Recommended)</span>
+              <span>10 kW (Large)</span>
             </div>
           </div>
 
-          {/* Monthly Electricity Bill Input */}
-          <div>
-            <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "var(--ink-100)", marginBottom: 6 }}>
+          {/* Monthly Bill Input */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-slate-700 block">
               {t("label_monthly_bill", "Average Monthly Electricity Bill (₹):")}
             </label>
-            <div style={{ position: "relative" }}>
-              <input
-                type="number"
-                min={500}
-                max={50000}
-                step={500}
-                value={monthlyBill}
-                onChange={(e) => setMonthlyBill(Number(e.target.value))}
-                style={{
-                  width: "100%",
-                  background: "var(--navy-panel-2)",
-                  border: "1px solid var(--hairline)",
-                  borderRadius: 10,
-                  padding: "10px 14px",
-                  color: "var(--ink-100)",
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: 14,
-                  outline: "none",
-                }}
-              />
-            </div>
-            {calculations.recommendedKW !== capacityKW && (
-              <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "var(--india-green)", marginTop: 6 }}>
-                <Info size={13} />
-                <span>
-                  {t("bill_rec_hint", "Based on your bill, a")} <strong>{calculations.recommendedKW} kW</strong> {t("bill_rec_suffix", "system is recommended.")}
-                  <button
-                    type="button"
-                    onClick={() => setCapacityKW(calculations.recommendedKW)}
-                    style={{ background: "none", border: "none", color: "var(--saffron)", cursor: "pointer", textDecoration: "underline", marginLeft: 6 }}
-                  >
-                    {t("btn_set_kw", "Set {val} kW").replace("{val}", calculations.recommendedKW)}
-                  </button>
-                </span>
-              </div>
-            )}
+            <input
+              type="number"
+              min={500}
+              max={50000}
+              step={500}
+              value={monthlyBill}
+              onChange={(e) => setMonthlyBill(Number(e.target.value))}
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold font-mono-num text-slate-900 focus:bg-white outline-none focus:border-blue-500"
+            />
           </div>
 
-          {/* Available Roof Area (sq ft) */}
-          <div>
-            <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "var(--ink-100)", marginBottom: 6 }}>
-              {t("label_roof_area", "Available Shadow-Free Rooftop Area (sq. ft.):")}
+          {/* Rooftop Area */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-slate-700 block">
+              {t("label_roof_area", "Shadow-Free Rooftop Area (sq. ft.):")}
             </label>
             <input
               type="number"
@@ -209,166 +168,102 @@ export default function SubsidyCalculator() {
               step={50}
               value={roofArea}
               onChange={(e) => setRoofArea(Number(e.target.value))}
-              style={{
-                width: "100%",
-                background: "var(--navy-panel-2)",
-                border: "1px solid var(--hairline)",
-                borderRadius: 10,
-                padding: "10px 14px",
-                color: "var(--ink-100)",
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: 14,
-                outline: "none",
-              }}
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold font-mono-num text-slate-900 focus:bg-white outline-none focus:border-blue-500"
             />
-            <div style={{ fontSize: 11, color: calculations.roofSufficient ? "var(--india-green)" : "#ef4444", marginTop: 6, display: "flex", alignItems: "center", gap: 6 }}>
-              <CheckCircle2 size={13} />
-              <span>
-                {t("required", "Required:")} <strong>{calculations.roofAreaRequired} sq ft</strong> ({calculations.roofSufficient ? t("area_sufficient", "Area is sufficient ✅") : t("insufficient_space", "Insufficient space ⚠️")})
-              </span>
+            <div className="text-xs font-medium text-emerald-600 flex items-center gap-1 mt-1">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>Required: {calculations.roofAreaRequired} sq ft ({calculations.roofSufficient ? "Area is sufficient ✅" : "Insufficient space ⚠️"})</span>
             </div>
           </div>
 
-          {/* Scheme Category */}
-          <div>
-            <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "var(--ink-100)", marginBottom: 6 }}>
-              {t("label_category", "Applicant Category:")}
-            </label>
-            <div style={{ display: "flex", gap: 10 }}>
+          {/* Category Selector */}
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-slate-700 block">{t("label_category", "Applicant Category:")}</label>
+            <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setCategory("residential")}
-                className="ss-chip"
-                data-active={category === "residential" || undefined}
-                style={{ flex: 1, justifyContent: "center", padding: "8px 12px" }}
+                className={`py-2 px-3 rounded-xl text-xs font-bold transition-all ${
+                  category === "residential" ? "bg-blue-600 text-white shadow-md shadow-blue-500/20" : "bg-slate-50 text-slate-700 border border-slate-200 hover:bg-blue-50 hover:text-blue-600"
+                }`}
               >
-                {t("residential_rooftop", "Residential Rooftop")}
+                Residential Rooftop
               </button>
               <button
                 type="button"
                 onClick={() => setCategory("ghs")}
-                className="ss-chip"
-                data-active={category === "ghs" || undefined}
-                style={{ flex: 1, justifyContent: "center", padding: "8px 12px" }}
+                className={`py-2 px-3 rounded-xl text-xs font-bold transition-all ${
+                  category === "ghs" ? "bg-blue-600 text-white shadow-md shadow-blue-500/20" : "bg-slate-50 text-slate-700 border border-slate-200 hover:bg-blue-50 hover:text-blue-600"
+                }`}
               >
-                {t("ghs_rwa_society", "GHS / RWA Society")}
+                GHS / RWA Society
               </button>
             </div>
           </div>
+
         </div>
 
-        {/* Financial Results & Breakdown Column */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+        {/* Results & ROI Payback Breakdown Column */}
+        <div className="lg:col-span-7 space-y-6">
           {/* Top 3 Result Cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
-            <div className="panel" style={{ padding: 14, background: "rgba(255, 153, 51, 0.08)", borderColor: "rgba(255, 153, 51, 0.3)" }}>
-              <div style={{ fontSize: 11, color: "var(--ink-500)", marginBottom: 4 }}>{t("estimated_total_cost", "Estimated Total Cost")}</div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: 18, color: "var(--ink-100)" }}>
-                ₹{calculations.totalCost.toLocaleString("en-IN")}
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)]">
+              <div className="text-xs text-slate-500 font-semibold mb-1">Estimated Cost</div>
+              <div className="text-xl font-bold font-mono-num text-slate-900">₹{calculations.totalCost.toLocaleString("en-IN")}</div>
             </div>
 
-            <div className="panel" style={{ padding: 14, background: "rgba(31, 174, 92, 0.1)", borderColor: "rgba(31, 174, 92, 0.4)" }}>
-              <div style={{ fontSize: 11, color: "var(--india-green)", fontWeight: 600, marginBottom: 4 }}>{t("govt_subsidy_lbl", "Govt. Subsidy (Muft Bijli)")}</div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: 18, color: "var(--india-green)" }}>
-                ₹{calculations.subsidy.toLocaleString("en-IN")}
-              </div>
+            <div className="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4 shadow-xs">
+              <div className="text-xs text-emerald-800 font-bold mb-1">Govt Subsidy Credit</div>
+              <div className="text-xl font-bold font-mono-num text-emerald-700">₹{calculations.subsidy.toLocaleString("en-IN")}</div>
             </div>
 
-            <div className="panel" style={{ padding: 14, background: "rgba(18, 58, 107, 0.15)", borderColor: "var(--hairline)" }}>
-              <div style={{ fontSize: 11, color: "var(--ink-500)", marginBottom: 4 }}>{t("net_out_of_pocket", "Net Out-of-Pocket Cost")}</div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: 18, color: "var(--chakra-blue-light)" }}>
-                ₹{calculations.netCost.toLocaleString("en-IN")}
-              </div>
+            <div className="bg-sky-50/70 border border-sky-200 rounded-2xl p-4 shadow-xs">
+              <div className="text-xs text-sky-800 font-bold mb-1">Net Investment</div>
+              <div className="text-xl font-bold font-mono-num text-sky-700">₹{calculations.netCost.toLocaleString("en-IN")}</div>
             </div>
           </div>
 
-          {/* Breakdown & Payback Panel */}
-          <div className="panel" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <div className="panel-title">
-              <Zap size={14} /> {t("subsidy_breakdown_title", "2. Cost & Energy Generation Breakdown")}
+          {/* Detailed ROI Breakdown */}
+          <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] space-y-4">
+            <div className="flex items-center gap-2 text-sm font-bold text-slate-800 uppercase tracking-wide font-display">
+              <Zap className="w-4 h-4 text-amber-500" />
+              <span>ROI Payback & Financial Yield Matrix</span>
             </div>
 
-            {/* Progress Bar Visualization */}
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 6 }}>
-                <span>{t("govt_subsidy", "Govt Subsidy:")} <strong>{Math.round((calculations.subsidy / calculations.totalCost) * 100)}%</strong></span>
-                <span>{t("you_pay", "You Pay:")} <strong>{Math.round((calculations.netCost / calculations.totalCost) * 100)}%</strong></span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
+                <div className="text-xs text-slate-500 font-medium mb-1">Monthly Gen</div>
+                <div className="text-base font-bold font-mono-num text-slate-900">{calculations.monthlyGenerationKWh} <span className="text-xs font-sans">kWh</span></div>
               </div>
-              <div style={{ height: 10, borderRadius: 5, background: "var(--hairline)", overflow: "hidden", display: "flex" }}>
-                <div style={{ width: `${(calculations.subsidy / calculations.totalCost) * 100}%`, background: "var(--india-green)", transition: "width 0.4s ease" }} />
-                <div style={{ width: `${(calculations.netCost / calculations.totalCost) * 100}%`, background: "var(--saffron)", transition: "width 0.4s ease" }} />
+
+              <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
+                <div className="text-xs text-slate-500 font-medium mb-1">Monthly Savings</div>
+                <div className="text-base font-bold font-mono-num text-emerald-700">₹{calculations.monthlySavingsINR.toLocaleString("en-IN")}</div>
+              </div>
+
+              <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
+                <div className="text-xs text-slate-500 font-medium mb-1">Payback Period</div>
+                <div className="text-base font-bold font-mono-num text-amber-600">{calculations.paybackYears} <span className="text-xs font-sans">Years</span></div>
+              </div>
+
+              <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
+                <div className="text-xs text-slate-500 font-medium mb-1">Annual Savings</div>
+                <div className="text-base font-bold font-mono-num text-sky-700">₹{calculations.annualSavingsINR.toLocaleString("en-IN")}</div>
               </div>
             </div>
 
-            {/* Key Performance Metrics List */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 4 }}>
-              <div className="stat-tile">
-                <div className="stat-icon" style={{ background: "rgba(255, 153, 51, 0.15)" }}>
-                  <Sun size={18} color="var(--saffron)" />
-                </div>
-                <div>
-                  <div className="stat-value">{calculations.monthlyGenerationKWh} <span className="stat-unit">{t("kwh_mo_unit", "kWh/mo")}</span></div>
-                  <div className="stat-label">{t("est_monthly_gen", "Est. Monthly Generation")}</div>
-                </div>
-              </div>
-
-              <div className="stat-tile">
-                <div className="stat-icon" style={{ background: "rgba(31, 174, 92, 0.15)" }}>
-                  <IndianRupee size={18} color="var(--india-green)" />
-                </div>
-                <div>
-                  <div className="stat-value">₹{calculations.monthlySavingsINR.toLocaleString("en-IN")} <span className="stat-unit">{t("per_mo_unit", "/mo")}</span></div>
-                  <div className="stat-label">{t("est_monthly_savings", "Est. Monthly Bill Savings")}</div>
-                </div>
-              </div>
-
-              <div className="stat-tile">
-                <div className="stat-icon" style={{ background: "rgba(91, 156, 232, 0.15)" }}>
-                  <ShieldCheck size={18} color="var(--chakra-blue-light)" />
-                </div>
-                <div>
-                  <div className="stat-value">{calculations.paybackYears} <span className="stat-unit">{t("years_unit", "Years")}</span></div>
-                  <div className="stat-label">{t("payback_period", "Payback Period")}</div>
-                </div>
-              </div>
-
-              <div className="stat-tile">
-                <div className="stat-icon" style={{ background: "rgba(255, 122, 26, 0.15)" }}>
-                  <Zap size={18} color="var(--saffron-deep)" />
-                </div>
-                <div>
-                  <div className="stat-value">₹{calculations.annualSavingsINR.toLocaleString("en-IN")} <span className="stat-unit">{t("per_yr_unit", "/yr")}</span></div>
-                  <div className="stat-label">{t("est_annual_savings", "Est. Annual Financial Savings")}</div>
-                </div>
-              </div>
+            {/* AI Summary Banner */}
+            <div className="bg-amber-50/70 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+              <Info className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <p className="text-xs text-amber-900 leading-relaxed font-medium">
+                Under the PM Surya Ghar scheme, your {capacityKW} kW system investment will be fully recovered in{" "}
+                <strong className="font-mono-num">{calculations.paybackYears} years</strong>, saving ₹{calculations.annualSavingsINR.toLocaleString("en-IN")} annually for 25+ years!
+              </p>
             </div>
-          </div>
-
-          {/* AI Explanation Callout Box */}
-          <div
-            className="panel"
-            style={{
-              background: "rgba(255, 255, 255, 0.02)",
-              border: "1px solid var(--hairline)",
-              padding: 16,
-            }}
-          >
-            <div style={{ fontWeight: 600, fontSize: 13, color: "var(--saffron)", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
-              <Info size={14} /> {t("ai_subsidy_summary_title", "AI Subsidy Summary")}
-            </div>
-            <p style={{ fontSize: 12, color: "var(--ink-300)", lineHeight: 1.5, margin: 0 }}>
-              {t("ai_subsidy_summary_desc", "Under the PM Surya Ghar scheme, a {capacity} kW solar system costs approx ₹{cost}. With your ₹{subsidy} direct subsidy credit, your net investment is reduced to ₹{netCost}. You will generate roughly {gen} units of free solar electricity every year, recovering your full investment in just {payback} years!")
-                .replace("{capacity}", capacityKW)
-                .replace("{cost}", calculations.totalCost.toLocaleString("en-IN"))
-                .replace("{subsidy}", calculations.subsidy.toLocaleString("en-IN"))
-                .replace("{netCost}", calculations.netCost.toLocaleString("en-IN"))
-                .replace("{gen}", calculations.annualGenerationKWh.toLocaleString("en-IN"))
-                .replace("{payback}", calculations.paybackYears)}
-            </p>
           </div>
         </div>
       </div>
     </div>
   );
 }
+

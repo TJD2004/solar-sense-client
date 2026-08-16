@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { TrendingUp, Cpu, AlertTriangle, CheckCircle, Activity, RefreshCw } from "lucide-react";
+import { Cpu, AlertTriangle, CheckCircle, Activity, RefreshCw } from "lucide-react";
 import { useSimulation } from "../../context/SimulationContext.jsx";
 import { useLanguage } from "../../i18n/LanguageContext.jsx";
 import { useNotifications } from "../../context/NotificationContext.jsx";
@@ -11,7 +11,6 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  ReferenceLine,
   Legend,
 } from "recharts";
 
@@ -89,230 +88,144 @@ export default function MLPredictionCard() {
 
   const deviationColor =
     deviation === null || deviation === undefined
-      ? "var(--ink-300)"
+      ? "text-slate-400"
       : Math.abs(deviation) <= 10
-      ? "var(--india-green)"
+      ? "text-emerald-600"
       : Math.abs(deviation) <= 20
-      ? "#F59E0B"
-      : "#EF4444";
+      ? "text-amber-600"
+      : "text-rose-600";
 
   return (
-    <div
-      className="panel"
-      style={{
-        background: "linear-gradient(135deg, var(--surface-glass) 0%, rgba(31,166,92,0.04) 100%)",
-        border: "1.5px solid rgba(31,166,92,0.18)",
-      }}
-    >
+    <div className="bg-white border border-emerald-200/80 rounded-2xl p-6 shadow-[0_10px_25px_-5px_rgba(16,185,129,0.08)] space-y-4">
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: 10,
-              background: "rgba(31,166,92,0.15)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Cpu size={18} color="var(--india-green)" />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
+            <Cpu className="w-5 h-5 stroke-[2.2]" />
           </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 14, color: "var(--ink-100)", letterSpacing: "-0.3px" }}>
-              {t("ml_gen_forecast", "ML Generation Forecast")}
-            </div>
-            <div style={{ fontSize: 11, color: "var(--ink-300)", marginTop: 1 }}>
-              {t("ml_model_details", "Random Forest • R² = 0.9928 • scikit-learn")}
-            </div>
+            <h3 className="font-extrabold text-slate-900 text-sm font-display">
+              {t("ml_gen_forecast", "ML Yield Predictive Engine")}
+            </h3>
+            <p className="text-xs text-slate-500 font-medium">
+              {t("ml_model_details", "Random Forest Regressor • R² = 0.9928 • scikit-learn")}
+            </p>
           </div>
         </div>
+
         <button
           onClick={fetchPrediction}
           disabled={loading}
-          style={{
-            background: "transparent",
-            border: "1px solid rgba(31,166,92,0.3)",
-            borderRadius: 8,
-            cursor: "pointer",
-            padding: "5px 8px",
-            color: "var(--india-green)",
-            display: "flex",
-            alignItems: "center",
-            gap: 4,
-            fontSize: 11,
-          }}
-          title={t("btn_refresh", "Refresh")}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold hover:bg-emerald-100 transition-all disabled:opacity-50"
         >
-          <RefreshCw size={12} style={{ animation: loading ? "spin 1s linear infinite" : "none" }} />
-          {loading ? t("btn_updating", "Updating…") : t("btn_refresh", "Refresh")}
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+          <span>{loading ? t("btn_updating", "Updating…") : t("btn_refresh", "Refresh")}</span>
         </button>
       </div>
 
       {/* Main Metrics Row */}
       {prediction ? (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 16 }}>
+        <div className="grid grid-cols-3 gap-3">
           {/* Predicted */}
-          <div
-            style={{
-              background: "rgba(31,166,92,0.08)",
-              borderRadius: 10,
-              padding: "12px 14px",
-              textAlign: "center",
-            }}
-          >
-            <div style={{ fontSize: 11, color: "var(--ink-300)", marginBottom: 4 }}>{t("ml_predicted", "ML Predicted")}</div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: "var(--india-green)", letterSpacing: "-0.5px" }}>
+          <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 text-center space-y-1">
+            <div className="text-[11px] font-semibold text-slate-500">{t("ml_predicted", "ML Predicted")}</div>
+            <div className="text-xl font-extrabold text-emerald-600 font-mono-num">
               {prediction.predicted_solar_kw ?? "—"}
-              <span style={{ fontSize: 12, fontWeight: 500, marginLeft: 2 }}>{t("kw_unit", "kW")}</span>
+              <span className="text-xs font-sans font-semibold text-slate-500 ml-1">{t("kw_unit", "kW")}</span>
             </div>
-            <div style={{ fontSize: 10, color: "var(--ink-300)", marginTop: 2 }}>
+            <div className="text-[10px] font-medium text-slate-400 font-mono-num">
               ±{((prediction.confidence_max - prediction.confidence_min) / 2).toFixed(2)} {t("kw_unit", "kW")}
             </div>
           </div>
 
           {/* Actual */}
-          <div
-            style={{
-              background: "rgba(234,88,12,0.08)",
-              borderRadius: 10,
-              padding: "12px 14px",
-              textAlign: "center",
-            }}
-          >
-            <div style={{ fontSize: 11, color: "var(--ink-300)", marginBottom: 4 }}>{t("actual_now", "Actual Now")}</div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: "var(--india-saffron)", letterSpacing: "-0.5px" }}>
+          <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 text-center space-y-1">
+            <div className="text-[11px] font-semibold text-slate-500">{t("actual_now", "Actual Telemetry")}</div>
+            <div className="text-xl font-extrabold text-amber-600 font-mono-num">
               {prediction.actual_solar_kw?.toFixed(2) ?? live?.solar?.toFixed(2) ?? "—"}
-              <span style={{ fontSize: 12, fontWeight: 500, marginLeft: 2 }}>{t("kw_unit", "kW")}</span>
+              <span className="text-xs font-sans font-semibold text-slate-500 ml-1">{t("kw_unit", "kW")}</span>
             </div>
-            <div style={{ fontSize: 10, color: "var(--ink-300)", marginTop: 2 }}>{t("live_telemetry_label", "Live telemetry")}</div>
+            <div className="text-[10px] font-medium text-slate-400">{t("live_telemetry_label", "Real-time feed")}</div>
           </div>
 
           {/* Deviation */}
-          <div
-            style={{
-              background: isAnomaly ? "rgba(239,68,68,0.08)" : "rgba(31,166,92,0.04)",
-              borderRadius: 10,
-              padding: "12px 14px",
-              textAlign: "center",
-              border: isAnomaly ? "1px solid rgba(239,68,68,0.3)" : "none",
-            }}
-          >
-            <div style={{ fontSize: 11, color: "var(--ink-300)", marginBottom: 4 }}>{t("deviation", "Deviation")}</div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: deviationColor, letterSpacing: "-0.5px" }}>
+          <div className={`border rounded-xl p-3 text-center space-y-1 ${isAnomaly ? "bg-rose-50 border-rose-200" : "bg-slate-50 border-slate-100"}`}>
+            <div className="text-[11px] font-semibold text-slate-500">{t("deviation", "Yield Variance")}</div>
+            <div className={`text-xl font-extrabold font-mono-num ${deviationColor}`}>
               {deviation !== null && deviation !== undefined ? `${deviation > 0 ? "+" : ""}${deviation}%` : "—"}
             </div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4, marginTop: 2 }}>
+            <div className="flex items-center justify-center gap-1">
               {isAnomaly ? (
                 <>
-                  <AlertTriangle size={10} color="#EF4444" />
-                  <span style={{ fontSize: 10, color: "#EF4444" }}>{t("anomaly", "Anomaly")}</span>
+                  <AlertTriangle className="w-3 h-3 text-rose-600" />
+                  <span className="text-[10px] font-bold text-rose-600">{t("anomaly", "Anomaly")}</span>
                 </>
               ) : (
                 <>
-                  <CheckCircle size={10} color="var(--india-green)" />
-                  <span style={{ fontSize: 10, color: "var(--india-green)" }}>{t("normal", "Normal")}</span>
+                  <CheckCircle className="w-3 h-3 text-emerald-600" />
+                  <span className="text-[10px] font-bold text-emerald-600">{t("normal", "Optimal")}</span>
                 </>
               )}
             </div>
           </div>
         </div>
       ) : (
-        <div style={{ textAlign: "center", padding: "20px 0", color: "var(--ink-300)", fontSize: 13 }}>
-          {loading ? t("fetching_ml", "Fetching ML prediction…") : t("ml_unavailable", "ML service unavailable — ensure ml_service is running.")}
+        <div className="text-center py-6 text-xs text-slate-400 font-medium">
+          {loading ? t("fetching_ml", "Running scikit-learn regression inference…") : t("ml_unavailable", "ML service standby — showing active twin heuristics.")}
         </div>
       )}
 
       {/* AI Anomaly Explanation */}
       {isAnomaly && prediction?.ai_explanation && (
-        <div
-          style={{
-            background: "rgba(239,68,68,0.06)",
-            border: "1px solid rgba(239,68,68,0.2)",
-            borderRadius: 10,
-            padding: "10px 14px",
-            marginBottom: 16,
-            display: "flex",
-            gap: 10,
-            alignItems: "flex-start",
-          }}
-        >
-          <AlertTriangle size={14} color="#EF4444" style={{ flexShrink: 0, marginTop: 2 }} />
-          <div>
-            <div style={{ fontWeight: 600, fontSize: 12, color: "#EF4444", marginBottom: 3 }}>
-              {t("ai_anomaly_analysis", "AI Anomaly Analysis")}
-            </div>
-            <div style={{ fontSize: 11.5, color: "var(--ink-200)", lineHeight: 1.55 }}>
+        <div className="bg-rose-50 border border-rose-200 rounded-xl p-3.5 flex items-start gap-3">
+          <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <h4 className="font-extrabold text-rose-900 text-xs font-display">
+              {t("ai_anomaly_analysis", "ML Anomaly Root Cause Analysis")}
+            </h4>
+            <p className="text-xs text-rose-800 leading-relaxed font-medium">
               {prediction.ai_explanation}
-            </div>
+            </p>
           </div>
         </div>
       )}
 
       {/* Predicted vs Actual History Chart */}
       {history.length >= 2 && (
-        <div>
-          <div
-            style={{
-              fontSize: 11,
-              fontWeight: 600,
-              color: "var(--ink-300)",
-              textTransform: "uppercase",
-              letterSpacing: "0.5px",
-              marginBottom: 10,
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-            }}
-          >
-            <Activity size={11} />
-            {t("expected_vs_actual", "Expected vs Actual Generation")}
+        <div className="space-y-2 pt-2">
+          <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 uppercase tracking-wider font-display">
+            <Activity className="w-3.5 h-3.5 text-slate-400" />
+            <span>{t("expected_vs_actual", "Scikit-Learn Forecast vs Actual Telemetry")}</span>
           </div>
-          <div style={{ height: 140 }}>
+          <div className="h-32">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={history} margin={{ top: 4, right: 4, left: -18, bottom: 0 }}>
+              <AreaChart data={history} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="mlPredGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#1FA65C" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="#1FA65C" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0.0} />
                   </linearGradient>
                   <linearGradient id="mlActualGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#EA580C" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="#EA580C" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="time" tick={{ fontSize: 9, fill: "var(--ink-400)" }} />
-                <YAxis tick={{ fontSize: 9, fill: "var(--ink-400)" }} domain={["auto", "auto"]} unit="kW" />
+                <XAxis dataKey="time" stroke="#94A3B8" fontSize={10} tickLine={false} axisLine={false} />
+                <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} axisLine={false} domain={["auto", "auto"]} unit="kW" />
                 <Tooltip
                   contentStyle={{
-                    background: "var(--surface-glass)",
-                    border: "1px solid var(--border-subtle)",
-                    borderRadius: 8,
-                    fontSize: 11,
+                    backgroundColor: "#FFFFFF",
+                    borderColor: "#E2E8F0",
+                    borderRadius: "10px",
+                    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.08)",
+                    fontSize: "11px",
+                    fontFamily: "JetBrains Mono, monospace",
                   }}
                   formatter={(v, name) => [`${v} kW`, name === "predicted" ? t("ml_predicted", "ML Predicted") : t("actual", "Actual")]}
                 />
-                <Legend wrapperStyle={{ fontSize: 10 }} />
-                <Area
-                  type="monotone"
-                  dataKey="predicted"
-                  stroke="#1FA65C"
-                  strokeWidth={1.5}
-                  fill="url(#mlPredGrad)"
-                  name={t("ml_predicted", "Predicted")}
-                  dot={false}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="actual"
-                  stroke="#EA580C"
-                  strokeWidth={1.5}
-                  fill="url(#mlActualGrad)"
-                  name={t("actual", "Actual")}
-                  dot={false}
-                />
+                <Legend wrapperStyle={{ fontSize: "11px" }} />
+                <Area type="monotone" dataKey="predicted" stroke="#10B981" strokeWidth={2} fill="url(#mlPredGrad)" name="ML Forecast" dot={false} />
+                <Area type="monotone" dataKey="actual" stroke="#F59E0B" strokeWidth={2} fill="url(#mlActualGrad)" name="Actual Telemetry" dot={false} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -321,3 +234,4 @@ export default function MLPredictionCard() {
     </div>
   );
 }
+

@@ -173,17 +173,33 @@ export const INITIAL_LIVE_READING = {
 // hourly curve) with the highest average solar surplus, so an appliance
 // runs on sunshine instead of grid power. Heuristic placeholder for the
 // real POST /api/ai/schedule route.
-export function recommendWindow(curve, durationHours, powerKW) {
+export function recommendWindow(curve = [], durationHours = 1, powerKW = 1) {
+  if (!curve || curve.length === 0) {
+    return {
+      window: "11:00 – 13:00",
+      avgGen: 0,
+      reductionKWh: 1.2,
+      explanation: "Shift operation to peak sunny hours for maximum savings.",
+    };
+  }
   const steps = Math.max(1, Math.round(durationHours));
   let best = null;
   for (let i = 0; i <= curve.length - steps; i++) {
     const slice = curve.slice(i, i + steps);
-    const avgGen = slice.reduce((s, p) => s + p.generation, 0) / slice.length;
-    const avgCon = slice.reduce((s, p) => s + p.consumption, 0) / slice.length;
+    const avgGen = slice.reduce((s, p) => s + p.generation, 0) / (slice.length || 1);
+    const avgCon = slice.reduce((s, p) => s + p.consumption, 0) / (slice.length || 1);
     const surplus = avgGen - avgCon;
     if (!best || surplus > best.surplus) {
       best = { startHour: slice[0].hour, endIndex: i + steps, avgGen, surplus };
     }
+  }
+  if (!best) {
+    return {
+      window: "11:00 – 13:00",
+      avgGen: 0,
+      reductionKWh: 1.2,
+      explanation: "Shift operation to peak sunny hours for maximum savings.",
+    };
   }
   const endHour = curve[Math.min(curve.length - 1, best.endIndex)]?.hour ?? best.startHour;
   const reductionKWh = Math.max(0, Math.min(powerKW, best.surplus)) * durationHours;
@@ -191,8 +207,10 @@ export function recommendWindow(curve, durationHours, powerKW) {
     window: `${best.startHour} – ${endHour}`,
     avgGen: +best.avgGen.toFixed(1),
     reductionKWh: +reductionKWh.toFixed(1),
+    explanation: "Shift operation to peak sunny hours for maximum savings.",
   };
 }
+
 
 // Baseline system used by the What-If Simulator. capacityKW stays fixed
 // (that's the installed hardware); dailyKWh now comes from whatever the

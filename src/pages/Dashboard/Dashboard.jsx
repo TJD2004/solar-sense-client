@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Sun, Home, Battery, Zap, Gauge, AlertTriangle } from "lucide-react";
+import { Sun, Home, Battery, Zap, Gauge, AlertTriangle, Activity } from "lucide-react";
 
 import StatTile from "../../components/common/StatTile.jsx";
 import ImpactCards from "../../components/common/ImpactCards.jsx";
@@ -40,14 +40,13 @@ export default function Dashboard() {
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scenario.id, healthScore]);
 
   if (initializing) {
     return (
-      <div style={{ display: "grid", gap: 18 }}>
+      <div className="space-y-6">
         <PanelSkeleton rows={4} />
-        <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 18 }}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <PanelSkeleton rows={5} />
           <PanelSkeleton rows={3} />
         </div>
@@ -60,13 +59,23 @@ export default function Dashboard() {
   }
 
   return (
-    <div>
-      <div>
+    <div className="space-y-6">
+      {/* Top Banner Controls & Voice Summary */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight font-display">
+            System Operations Overview
+          </h1>
+          <p className="text-xs text-slate-500 font-medium">Real-time solar generation telemetry & generative AI performance insights.</p>
+        </div>
         <VoiceSummaryButton />
+      </div>
 
-        {anomalyActive && (
-          <div className="anomaly-banner" role="status">
-            <AlertTriangle size={16} aria-hidden="true" />
+      {/* Anomaly Alert Banner */}
+      {anomalyActive && (
+        <div className="bg-rose-50 border border-rose-200 text-rose-900 rounded-xl p-4 flex items-center gap-3 shadow-xs">
+          <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
+          <div className="text-sm font-medium">
             {scenario.id === "inverter"
               ? `🚨 ${t("alert_inverter", "Inverter Hardware Failure")} — ${t("inverter_halted", "Power generation halted. Hardware check required.")}`
               : scenario.id === "soiling"
@@ -81,71 +90,84 @@ export default function Dashboard() {
               ? t("anomaly_normal", "Production anomaly detected — output dropped sharply in the last interval.")
               : `${scenario.emoji} ${t("anomaly_detected", "Production anomaly detected")} — ${t("scenario_" + scenario.id, scenario.label)}`}
           </div>
-        )}
+        </div>
+      )}
 
-        <ScenarioControl />
+      {/* Interactive Scenario Controls */}
+      <ScenarioControl />
 
-        <div className="hero-grid" style={{ display: "grid", gridTemplateColumns: "1.35fr 1fr", gap: 18, marginBottom: 18 }}>
-          <div className="panel">
-            <div className="panel-title">
-              <Zap size={14} /> {t("energy_flow_title", "Real-Time Energy Flow")}
-            </div>
-            <EnergyFlowDiagram solar={live.solar} home={live.home} battery={live.battery} grid={live.grid} />
+
+      {/* Main Grid: Energy Flow Diagram & Live Telemetry Health */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left: Real-Time Energy Flow Matrix */}
+        <div className="lg:col-span-5 bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] flex flex-col justify-between">
+          <div className="flex items-center gap-2 font-bold text-slate-800 text-sm tracking-wide uppercase font-display mb-4">
+            <Activity className="w-4 h-4 text-amber-500 stroke-[2.5]" />
+            <span>{t("energy_flow_title", "Real-Time Energy Flow Matrix")}</span>
           </div>
-          <div className="panel">
-            <div className="panel-title">
-              <Gauge size={14} /> {t("live_telemetry", "Live Telemetry")}
-            </div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(4,1fr)",
-                gap: 10,
-                marginBottom: 18,
-              }}
-            >
-              <StatTile icon={Sun} label={t("solar_generation", "Generation")} value={live.solar} unit="kW" accent="#FF9933" />
-              <StatTile icon={Home} label={t("home_consumption", "Consumption")} value={live.home} unit="kW" accent="#5B9CE8" />
-              <StatTile icon={Battery} label={t("battery_charge", "Battery")} value={live.battery} unit="%" accent="#1FAE5C" />
-              <StatTile icon={Zap} label={t("grid_export", "Grid Net")} value={live.grid} unit="kW" accent="#FF7A1A" />
-            </div>
-            <ChakraGauge score={healthScore} label={t("solar_health_score", "Solar Health")} />
+          <div className="flex-1 flex items-center justify-center py-2">
+            <EnergyFlowDiagram solar={live?.solar ?? 0} home={live?.home ?? 0} battery={live?.battery ?? 0} grid={live?.grid ?? 0} />
           </div>
         </div>
 
-        <TelemetryStream />
+        {/* Right: Live Telemetry Card (Metric Tiles + Chakra Gauge) */}
+        <div className="lg:col-span-7 bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] space-y-6">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 font-bold text-slate-800 text-sm tracking-wide uppercase font-display">
+              <Gauge className="w-4 h-4 text-sky-500 stroke-[2.5]" />
+              <span>{t("live_telemetry", "Live Telemetry")}</span>
+            </div>
+            <span className="text-xs font-mono-num font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+              OPTIMAL
+            </span>
+          </div>
 
-        <div className="mid-grid" style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 18, marginBottom: 18 }}>
-          <GenerationChart data={curve} />
-          <ImpactCards />
-        </div>
+          {/* 4 Telemetry Mini Metric Tiles Row */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <StatTile icon={Sun} label={t("solar_generation", "Solar Generation")} value={live?.solar ?? 0} unit="kW" accent="#F59E0B" />
+            <StatTile icon={Home} label={t("home_consumption", "Home Consumption")} value={live?.home ?? 0} unit="kW" accent="#0EA5E9" />
+            <StatTile icon={Battery} label={t("battery_charge", "Battery Charge")} value={live?.battery ?? 0} unit="%" accent="#10B981" />
+            <StatTile icon={Zap} label={t("grid_export", "Grid Export Ratio")} value={live?.grid ?? 0} unit="kW" accent="#F97316" />
+          </div>
 
-        <AIInsightCard
-          title={t("ai_detective_title", (insight || scenario.insight).title)}
-          body={(insight || scenario.insight).body}
-          tags={(insight || scenario.insight).tags}
-          source={insight?.source}
-          loading={insightLoading}
-        />
-
-        {/* ML Prediction + Hackathon Judges Showcase */}
-        <div
-          className="ml-grid"
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, marginTop: 18 }}
-        >
-          <MLPredictionCard />
-          <MLJudgesCard />
+          {/* Centered Chakra Health Gauge */}
+          <div className="pt-2 flex justify-center">
+            <ChakraGauge score={healthScore ?? 87} label={t("solar_health_score", "Solar Health Index")} />
+          </div>
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 820px) {
-          .hero-grid, .mid-grid, .ml-grid { grid-template-columns: 1fr !important; }
-        }
-        @media (max-width: 560px) {
-          .hero-grid .panel > div[style*="repeat(4,1fr)"] { grid-template-columns: repeat(2,1fr) !important; }
-        }
-      `}</style>
+
+      {/* Telemetry Stream */}
+      <TelemetryStream />
+
+      {/* Center Row: Generation Curve & Carbon Impact */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-8">
+          <GenerationChart data={curve || []} />
+        </div>
+        <div className="lg:col-span-4">
+          <ImpactCards />
+        </div>
+      </div>
+
+      {/* AI Sense Dedicated Insight Box outlined in AI Accent Color */}
+      <AIInsightCard
+        title={t("ai_detective_title", (insight || scenario?.insight || {}).title || "Solar Performance Detective")}
+        body={(insight || scenario?.insight || {}).body || "Production is running close to expected levels."}
+        tags={(insight || scenario?.insight || {}).tags || ["☁️ Cloud cover", "🌳 Shading"]}
+        source={insight?.source}
+        loading={insightLoading}
+      />
+
+
+      {/* ML Predictive & Judges Showcase */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <MLPredictionCard />
+        <MLJudgesCard />
+      </div>
     </div>
   );
 }
+

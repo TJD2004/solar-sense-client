@@ -1,10 +1,10 @@
 import React from "react";
-import { Bot } from "lucide-react";
+import { Sparkles, Brain, Bot, CheckCircle } from "lucide-react";
 import { useLanguage } from "../../i18n/LanguageContext.jsx";
 
 const INSIGHT_TRANSLATIONS = {
   hi: {
-    title: "एआई प्रदर्शन जासूस",
+    title: "एआई सेंस प्रदर्शन विश्लेषक",
     normal_body: "आज के मौसम और समय के लिए उत्पादन अपेक्षित स्तरों के बहुत करीब चल रहा है। यदि उत्पादन पूर्वानुमान से नीचे गिरता है, तो यह पैनल केवल संख्या दिखाने के बजाय संभावित कारकों — बादलों का छाना, छाया या धूल — की व्याख्या करेगा।",
     normal_tags: ["✅ सामान्य प्रदर्शन", "☀️ स्पष्ट आसमान", "⚡ 100% स्वास्थ्य"],
     cloudy_body: "आउटपुट में 10:00 और 15:00 के बीच कई तीव्र, अस्थायी गिरावट दिखाई देती है। यह उतार-चढ़ाव वाला पैटर्न हार्डवेयर की गिरावट के बजाय गुजरते बादलों के आवरण से मेल खाता है।",
@@ -17,7 +17,7 @@ const INSIGHT_TRANSLATIONS = {
     inverter_tags: ["⚠️ इन्वर्टर फॉल्ट - संभव, हार्डवेयर जांचें", "☁️ बादल छाना - संभावना नहीं", "🧹 धूल - संभावना नहीं"],
   },
   mr: {
-    title: "एआई कामगिरी शोधक",
+    title: "एआई सेन्स कामगिरी विश्लेषक",
     normal_body: "आजच्या हवामानासाठी आणि वेळेसाठी निर्मिती अपेक्षित पातळीच्या जवळ सुरू आहे. जर निर्मिती अंदाजापेक्षा खाली घसरली, तर हे पॅनेल केवळ संख्या दाखवण्याऐवजी संभाव्य कारणे — ढगाळ वातावरण, सावली किंवा धूळ — स्पष्ट करेल.",
     normal_tags: ["✅ सामान्य कामगिरी", "☀️ निरभ्र आकाश", "⚡ 100% आरोग्य"],
     cloudy_body: "आउटपुटमध्ये 10:00 आणि 15:00 दरम्यान अनेक तीव्र, तात्पुरत्या घसरणी दिसतात. हा चढ-उताराचा नमुना हार्डवेअरच्या बिघाडाऐवजी ढगाळ वातावरणाशी जुळतो.",
@@ -32,7 +32,7 @@ const INSIGHT_TRANSLATIONS = {
 };
 
 function formatGroqBody(text, lang) {
-  if (lang === "en" || !text) return text;
+  if (lang === "en" || !text) return text || "";
   let translated = text;
 
   if (lang === "hi") {
@@ -66,49 +66,55 @@ export default function AIInsightCard({
   const { language, t } = useLanguage();
   const langDict = INSIGHT_TRANSLATIONS[language];
 
-  let displayTitle = t("ai_detective_title", title);
-  let displayBody = body;
-  let displayTags = tags;
+  let displayTitle = t("ai_detective_title", title || "AI Performance Detective");
+  let displayBody = body || "Production is running close to expected levels.";
+  let displayTags = Array.isArray(tags) ? tags : ["☁️ Cloud cover", "🌳 Shading"];
 
-  if (langDict) {
-    if (body.includes("10:00") && body.includes("15:00")) {
+  if (langDict && displayBody) {
+    if (displayBody.includes("10:00") && displayBody.includes("15:00")) {
       displayBody = langDict.cloudy_body;
       displayTags = langDict.cloudy_tags;
-    } else if (body.includes("14:00–17:00") || body.includes("14:00-17:00")) {
+    } else if (displayBody.includes("14:00–17:00") || displayBody.includes("14:00-17:00")) {
       displayBody = langDict.shading_body;
       displayTags = langDict.shading_tags;
-    } else if (body.includes("dust") || body.includes("soiling") || body.includes("slow")) {
+    } else if (displayBody.includes("dust") || displayBody.includes("soiling") || displayBody.includes("slow")) {
       displayBody = langDict.soiling_body;
       displayTags = langDict.soiling_tags;
-    } else if (body.includes("12:00") || body.includes("inverter")) {
+    } else if (displayBody.includes("12:00") || displayBody.includes("inverter")) {
       displayBody = langDict.inverter_body;
       displayTags = langDict.inverter_tags;
-    } else if (body.includes("close to expected")) {
+    } else if (displayBody.includes("close to expected")) {
       displayBody = langDict.normal_body;
       displayTags = langDict.normal_tags;
     } else {
-      displayBody = formatGroqBody(body, language);
+      displayBody = formatGroqBody(displayBody, language);
     }
   }
 
   return (
-    <div className="panel insight-panel">
-      <div className="insight-icon" style={{ background: "rgba(255,153,51,0.12)" }}>
-        <Bot size={19} color="var(--saffron)" />
+    <div className="bg-white border-2 border-purple-500/80 rounded-2xl p-6 shadow-[0_10px_25px_-5px_rgba(139,92,246,0.12)] flex items-start gap-4 transition-all">
+      <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center border border-purple-200 shrink-0">
+        <Sparkles className="w-5 h-5 stroke-[2.2]" />
       </div>
-      <div>
-        <div className="insight-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {displayTitle}
-          {source && (
-            <span style={{ fontSize: 10, color: "var(--ink-500)", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 500 }}>
-              {source === "groq" ? "🧠 Groq" : "⚙️ Heuristic"}
-            </span>
-          )}
+      <div className="space-y-2 flex-1">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <h3 className="font-extrabold text-slate-900 text-sm font-display">{displayTitle}</h3>
+            {source && (
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 border border-purple-200 font-mono-num">
+                {source === "groq" ? "🧠 Llama-3 AI" : "⚙️ Diagnostic Heuristic"}
+              </span>
+            )}
+          </div>
         </div>
-        <div className="insight-body" style={{ opacity: loading ? 0.6 : 1, lineHeight: 1.5 }}>{displayBody}</div>
-        <div className="insight-tags">
+
+        <p className={`text-xs text-slate-600 leading-relaxed font-medium transition-opacity ${loading ? "opacity-60" : "opacity-100"}`}>
+          {displayBody}
+        </p>
+
+        <div className="flex items-center gap-2 flex-wrap pt-1">
           {displayTags.map((tag) => (
-            <span className="insight-tag" key={tag}>
+            <span key={tag} className="px-2.5 py-1 rounded-lg bg-purple-50 text-purple-800 border border-purple-200/80 text-[11px] font-semibold">
               {tag}
             </span>
           ))}

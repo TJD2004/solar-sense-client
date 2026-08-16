@@ -1,5 +1,5 @@
 import React from "react";
-import { WifiOff, Wifi, History } from "lucide-react";
+import { WifiOff, Wifi, History, Sliders } from "lucide-react";
 import { useSimulation } from "../../context/SimulationContext.jsx";
 import { useLanguage } from "../../i18n/LanguageContext.jsx";
 
@@ -8,24 +8,44 @@ function formatTime(d) {
 }
 
 export default function ScenarioControl() {
-  const { scenarios, scenarioId, setScenario, offline, toggleOffline, anomalyActive, eventLog, connection } =
-    useSimulation();
+  const { scenarios, scenarioId, setScenario, offline, toggleOffline, anomalyActive, eventLog } = useSimulation();
   const { t } = useLanguage();
 
   const SCENARIO_LABELS = {
-    normal: t("scenario_normal", "Normal Day"),
+    normal: t("scenario_normal", "Normal Clear Sky"),
     cloudy: t("scenario_cloudy", "Passing Clouds"),
     shading: t("scenario_shading", "Afternoon Shading"),
-    soiling: t("scenario_soiling", "Panel Dust"),
-    inverter: t("scenario_inverter", "Inverter Fault"),
-    rainy: t("scenario_rainy", "Heavy Rain"),
+    soiling: t("scenario_soiling", "Panel Dust & Soiling"),
+    inverter: t("scenario_inverter", "Inverter Hardware Fault"),
+    rainy: t("scenario_rainy", "Heavy Monsoon Rain"),
     heatwave: t("scenario_heatwave", "Extreme Heatwave"),
   };
 
   return (
-    <div className="panel ss-alert-frame" data-alert={anomalyActive || undefined} style={{ marginBottom: 18 }}>
-      <div className="panel-title">{t("scenario_title", "Digital Twin — Simulate a Condition")}</div>
-      <div role="radiogroup" aria-label="Simulated condition" style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12 }}>
+    <div className={`bg-white border rounded-2xl p-6 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] space-y-4 transition-colors ${
+      anomalyActive ? "border-rose-200 bg-rose-50/20" : "border-slate-100"
+    }`}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2 font-bold text-slate-800 text-sm tracking-wide uppercase font-display">
+          <Sliders className="w-4 h-4 text-amber-500 stroke-[2.5]" />
+          <span>{t("scenario_title", "Digital Twin — Inject Condition & Fault Scenario")}</span>
+        </div>
+
+        <button
+          type="button"
+          onClick={toggleOffline}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all self-start sm:self-auto ${
+            offline
+              ? "bg-rose-500 text-white shadow-xs"
+              : "bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100"
+          }`}
+        >
+          {offline ? <WifiOff className="w-3.5 h-3.5" /> : <Wifi className="w-3.5 h-3.5 text-emerald-600" />}
+          <span>{offline ? t("meter_offline", "Meter Offline") : t("simulate_drop", "Simulate Connection Drop")}</span>
+        </button>
+      </div>
+
+      <div role="radiogroup" aria-label="Simulated condition" className="flex items-center gap-2 flex-wrap">
         {scenarios.map((s) => {
           const isActive = s.id === scenarioId;
           const displayLabel = SCENARIO_LABELS[s.id] || s.label;
@@ -37,44 +57,27 @@ export default function ScenarioControl() {
               aria-checked={isActive}
               onClick={() => setScenario(s.id)}
               title={s.description}
-              className="ss-chip"
-              data-active={isActive || undefined}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                isActive
+                  ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
+                  : "bg-slate-50 text-slate-700 border border-slate-200 hover:bg-blue-50 hover:text-blue-600"
+              }`}
+
             >
-              <span aria-hidden="true">{s.emoji}</span> {displayLabel}
+              <span>{s.emoji}</span>
+              <span>{displayLabel}</span>
             </button>
           );
         })}
-        <button
-          type="button"
-          onClick={toggleOffline}
-          aria-pressed={offline}
-          className="ss-chip"
-          data-active={offline || undefined}
-          data-variant="danger"
-          style={{ marginLeft: "auto" }}
-        >
-          {offline ? <WifiOff size={13} /> : <Wifi size={13} />}
-          {offline ? t("meter_offline", "Meter offline") : t("simulate_drop", "Simulate connection drop")}
-        </button>
       </div>
 
       {eventLog.length > 0 && (
-        <div style={{ marginTop: 16, paddingTop: 14, borderTop: "1px solid var(--hairline)" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              fontSize: 11,
-              color: "var(--ink-500)",
-              textTransform: "uppercase",
-              letterSpacing: "0.06em",
-              marginBottom: 8,
-            }}
-          >
-            <History size={12} /> {t("event_log_title", "Event log")}
+        <div className="pt-3 border-t border-slate-100 space-y-2">
+          <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 uppercase tracking-wider font-display">
+            <History className="w-3.5 h-3.5 text-slate-400" />
+            <span>{t("event_log_title", "Digital Twin Event Log")}</span>
           </div>
-          <ul className="ss-event-log">
+          <ul className="space-y-1 text-xs font-mono-num max-h-24 overflow-y-auto pr-1">
             {eventLog.map((e) => {
               let msgStr = e.message;
               if (msgStr.includes("Production anomaly detected")) msgStr = t("anomaly_detected_msg", "Production anomaly detected");
@@ -99,10 +102,10 @@ export default function ScenarioControl() {
               }
 
               return (
-                <li key={e.id}>
-                  <span className="ss-log-time">{formatTime(e.ts)}</span>
-                  <span aria-hidden="true">{e.emoji}</span>
-                  <span>{msgStr}</span>
+                <li key={e.id} className="flex items-center gap-2 text-slate-600">
+                  <span className="text-[10px] text-slate-400 font-bold">{formatTime(e.ts)}</span>
+                  <span>{e.emoji}</span>
+                  <span className="font-semibold text-slate-800">{msgStr}</span>
                 </li>
               );
             })}
@@ -112,3 +115,4 @@ export default function ScenarioControl() {
     </div>
   );
 }
+

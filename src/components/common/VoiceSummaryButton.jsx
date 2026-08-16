@@ -258,62 +258,37 @@ export default function VoiceSummaryButton() {
   };
 
   return (
-    <div
-      style={{
-        background: "linear-gradient(135deg, rgba(255, 153, 51, 0.08), rgba(31, 174, 92, 0.06))",
-        border: "1px solid var(--hairline)",
-        borderRadius: 14,
-        padding: "12px 16px",
-        marginBottom: 18,
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
+    <div className="bg-white border border-amber-200/80 rounded-2xl p-4 shadow-[0_10px_25px_-5px_rgba(245,158,11,0.08)] mb-6 space-y-3">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         {/* Left Info Title */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: 8,
-              background: "rgba(255, 153, 51, 0.15)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Sparkles size={16} color="var(--saffron)" />
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200/80 shrink-0">
+            <Sparkles className="w-5 h-5 stroke-[2.2]" />
           </div>
           <div>
-            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 13, color: "var(--ink-100)" }}>
+            <h3 className="font-extrabold text-slate-900 text-sm font-display">
               {t("voice_briefing_title", "AI Voice Audio Briefing")}
-            </div>
-            <div style={{ fontSize: 11, color: "var(--ink-500)" }}>
+            </h3>
+            <p className="text-xs text-slate-500 font-medium">
               {t("voice_briefing_sub", "Listen to live status, generation stats & recommendations")}
-            </div>
+            </p>
           </div>
         </div>
 
         {/* Action Controls */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={handleSpeakToggle}
-            className="ss-chip"
-            data-active={speaking || undefined}
-            style={{
-              background: speaking ? "var(--saffron)" : "var(--saffron-deep)",
-              color: "#ffffff",
-              border: "none",
-              padding: "7px 14px",
-              fontWeight: 600,
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              boxShadow: speaking ? "0 0 12px rgba(255, 153, 51, 0.6)" : "none",
-            }}
+            className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 shadow-sm ${
+              speaking
+                ? "bg-rose-600 text-white shadow-rose-200 animate-pulse"
+                : "bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/20"
+            }`}
+
           >
-            {speaking ? <Square size={14} fill="#ffffff" /> : <Play size={14} fill="#ffffff" />}
-            <span>{speaking ? t("btn_stop_audio", "Stop Briefing") : t("btn_play_audio", "Listen Now")}</span>
+            {speaking ? <Square className="w-3.5 h-3.5 fill-white" /> : <Play className="w-3.5 h-3.5 fill-white" />}
+            <span className="tracking-wide">{speaking ? t("btn_stop_audio", "Stop Briefing") : t("btn_play_audio", "Listen Now")}</span>
           </button>
 
           <button
@@ -322,34 +297,24 @@ export default function VoiceSummaryButton() {
               if (!transcript) setTranscript(generateSummaryText());
               setShowTranscript(!showTranscript);
             }}
-            className="ss-btn-ghost"
-            style={{ padding: "6px 10px", fontSize: 11 }}
+            className="p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 transition-all"
             title={t("btn_transcript", "View Transcript")}
           >
-            {showTranscript ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            {showTranscript ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
         </div>
       </div>
 
       {/* Expandable Transcript Box */}
       {showTranscript && (
-        <div
-          style={{
-            marginTop: 12,
-            paddingTop: 10,
-            borderTop: "1px dashed var(--hairline)",
-            fontSize: 12,
-            color: "var(--ink-300)",
-            lineHeight: 1.5,
-            fontFamily: "'Inter', sans-serif",
-          }}
-        >
-          <div style={{ fontWeight: 600, fontSize: 11, color: "var(--saffron)", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+        <div className="pt-3 border-t border-slate-100 text-xs text-slate-600 leading-relaxed font-medium space-y-1">
+          <div className="font-extrabold text-[11px] text-amber-600 uppercase tracking-wider font-display">
             🗣️ {t("transcript_label", "Audio Transcript")} ({language.toUpperCase()})
           </div>
-          {transcript || generateSummaryText()}
+          <p>{transcript || generateSummaryText()}</p>
         </div>
       )}
     </div>
   );
+
 }
