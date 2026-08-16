@@ -11,13 +11,14 @@ function formatNotifTime(d) {
 
 export function NotificationBell() {
   const { unreadCount, drawerOpen, setDrawerOpen } = useNotifications();
+  const { t } = useLanguage();
 
   return (
     <button
       type="button"
       onClick={() => setDrawerOpen(!drawerOpen)}
-      aria-label="Open notifications"
-      title="Real-Time Alerts & Notifications"
+      aria-label={t("notif_bell_tooltip", "Real-Time Alerts & Notifications")}
+      title={t("notif_bell_tooltip", "Real-Time Alerts & Notifications")}
       style={{
         position: "relative",
         display: "flex",

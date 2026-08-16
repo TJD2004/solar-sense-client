@@ -60,7 +60,7 @@ export default function Analytics() {
               className="ss-chip"
               data-active={range === r.id || undefined}
             >
-              {r.label}
+              {t(r.id, r.label)}
             </button>
           ))}
         </div>

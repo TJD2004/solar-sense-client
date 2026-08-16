@@ -40,9 +40,17 @@ export const getTodaySolar = () => api.get("/solar/today").then((r) => r.data);
 export const getSolarHistory = (range = "7d") => api.get(`/solar/history?range=${range}`).then((r) => r.data);
 
 // --- AI ---
-export const analyzePerformance = (payload) => api.post("/ai/analyze", payload).then((r) => r.data);
-export const chatWithCopilot = (message) => api.post("/ai/chat", { message }).then((r) => r.data);
-export const getScheduleRecommendation = (appliance) => api.post("/ai/schedule", appliance).then((r) => r.data);
+const getLang = () => {
+  try {
+    return localStorage.getItem("solarsense_lang") || "en";
+  } catch {
+    return "en";
+  }
+};
+
+export const analyzePerformance = (payload) => api.post("/ai/analyze", { ...payload, lang: getLang() }).then((r) => r.data);
+export const chatWithCopilot = (message) => api.post("/ai/chat", { message, lang: getLang() }).then((r) => r.data);
+export const getScheduleRecommendation = (appliance) => api.post("/ai/schedule", { ...appliance, lang: getLang() }).then((r) => r.data);
 
 // --- Forecast ---
 export const getForecastToday = () => api.get("/forecast/today").then((r) => r.data);
