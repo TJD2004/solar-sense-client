@@ -12,8 +12,11 @@ export function NotificationProvider({ children }) {
     {
       id: "init-welcome",
       type: "info", // "critical" | "warning" | "info"
-      title: "SolarSense System Online",
-      message: "Real-time IoT telemetry and digital twin connected.",
+      titleKey: "notif_welcome_title",
+      titleFallback: "SolarSense System Online",
+      messageKey: "notif_welcome_msg",
+      messageFallback: "Real-time IoT telemetry and digital twin connected.",
+      messageArgs: {},
       ts: new Date(),
       read: false,
     },
@@ -26,17 +29,20 @@ export function NotificationProvider({ children }) {
   const prevScenarioRef = useRef(null);
   const prevGridHighRef = useRef(false);
 
-  // Helper to add a notification
-  const addNotification = useCallback((type, title, message) => {
+  // Helper to add a notification using keys and parameters for dynamic i18n
+  const addNotification = useCallback((type, titleKey, titleFallback, messageKey, messageFallback, messageArgs = {}) => {
     const item = {
       id: `${Date.now()}-${Math.random()}`,
       type,
-      title,
-      message,
+      titleKey,
+      titleFallback,
+      messageKey,
+      messageFallback,
+      messageArgs,
       ts: new Date(),
       read: false,
     };
-    setNotifications((prev) => [item, ...prev].slice(0, 50));
+    setNotifications((prev) => [item, ...prev].slice(0, 100));
   }, []);
 
   const prevHighTempRef = useRef(false);
@@ -47,12 +53,15 @@ export function NotificationProvider({ children }) {
     if (anomalyActive && !prevAnomalyRef.current) {
       addNotification(
         "critical",
-        t("notif_anomaly_title", "Production Anomaly Detected"),
-        `${scenario?.label || "Solar generation drop"}: output is running below baseline.`
+        "notif_anomaly_title",
+        "Production Anomaly Detected",
+        "notif_anomaly_desc_args",
+        "{scenario}: output is running below baseline.",
+        { scenarioId: scenario?.id, scenarioFallback: scenario?.label || "Solar generation drop" }
       );
     }
     prevAnomalyRef.current = anomalyActive;
-  }, [anomalyActive, scenario, addNotification, t]);
+  }, [anomalyActive, scenario, addNotification]);
 
   // 2. Scenario change trigger
   useEffect(() => {
@@ -60,13 +69,16 @@ export function NotificationProvider({ children }) {
       if (scenario.id !== "normal") {
         addNotification(
           "warning",
-          t("notif_scenario_title", "Environmental Condition Changed"),
-          `${scenario.emoji} ${scenario.label}: ${scenario.description}`
+          "notif_scenario_title",
+          "Environmental Condition Changed",
+          "notif_scenario_desc_args",
+          "{emoji} {label}: {desc}",
+          { emoji: scenario.emoji, scenarioId: scenario.id, label: scenario.label, desc: scenario.description }
         );
       }
       prevScenarioRef.current = scenario.id;
     }
-  }, [scenario, addNotification, t]);
+  }, [scenario, addNotification]);
 
   // 3. High Temperature Alert (>= 40°C / Panel >= 45°C)
   useEffect(() => {
@@ -77,14 +89,17 @@ export function NotificationProvider({ children }) {
     if (isHighTemp && !prevHighTempRef.current) {
       addNotification(
         "critical",
-        t("notif_temp_high_title", "🔥 High Panel Temperature Alert"),
-        `Panel temperature reached ${temp.toFixed(1)}°C. Thermal efficiency loss is occurring.`
+        "notif_temp_high_title",
+        "🔥 High Panel Temperature Alert",
+        "notif_temp_high_desc",
+        "Panel temperature reached {temp}°C. Thermal efficiency loss is occurring.",
+        { temp: temp.toFixed(1) }
       );
       prevHighTempRef.current = true;
     } else if (!isHighTemp) {
       prevHighTempRef.current = false;
     }
-  }, [live?.panelTemp, live?.ambientTemp, addNotification, t]);
+  }, [live?.panelTemp, live?.ambientTemp, addNotification]);
 
   // 4. Heavy Cloud Cover / Low Solar Irradiance Alert (< 350 W/m²)
   useEffect(() => {
@@ -95,14 +110,17 @@ export function NotificationProvider({ children }) {
     if (isLowIrr && !prevCloudyRef.current) {
       addNotification(
         "warning",
-        t("notif_cloud_title", "☁️ Heavy Cloud Cover Alert"),
-        `Solar irradiance dropped to ${irr} W/m². Generation is reduced.`
+        "notif_cloud_title",
+        "☁️ Heavy Cloud Cover Alert",
+        "notif_cloud_desc",
+        "Solar irradiance dropped to {irr} W/m². Generation is reduced.",
+        { irr }
       );
       prevCloudyRef.current = true;
     } else if (!isLowIrr) {
       prevCloudyRef.current = false;
     }
-  }, [live?.irradiance, addNotification, t]);
+  }, [live?.irradiance, addNotification]);
 
   const prevSoilingRef = useRef(false);
   const prevShadingRef = useRef(false);
@@ -115,14 +133,16 @@ export function NotificationProvider({ children }) {
     if (isSoiled && !prevSoilingRef.current) {
       addNotification(
         "warning",
-        t("notif_soiling_title", "🧹 Panel Dust & Soiling Warning"),
-        `Dust/debris accumulation detected on solar array. Clean panels to restore efficiency.`
+        "notif_soiling_title",
+        "🧹 Panel Dust & Soiling Warning",
+        "notif_soiling_desc",
+        "Dust/debris accumulation detected on solar array. Clean panels to restore efficiency."
       );
       prevSoilingRef.current = true;
     } else if (!isSoiled) {
       prevSoilingRef.current = false;
     }
-  }, [scenario?.id, live, addNotification, t]);
+  }, [scenario?.id, live, addNotification]);
 
   // 4c. Shading Alert
   useEffect(() => {
@@ -131,14 +151,16 @@ export function NotificationProvider({ children }) {
     if (isShaded && !prevShadingRef.current) {
       addNotification(
         "warning",
-        t("notif_shading_title", "🌳 Array Shading Alert"),
-        `Obstruction detected shading portion of solar array.`
+        "notif_shading_title",
+        "🌳 Array Shading Alert",
+        "notif_shading_desc",
+        "Obstruction detected shading portion of solar array."
       );
       prevShadingRef.current = true;
     } else if (!isShaded) {
       prevShadingRef.current = false;
     }
-  }, [scenario?.id, live, addNotification, t]);
+  }, [scenario?.id, live, addNotification]);
 
   // 4d. AC Voltage Drop / Sag Alert (< 215V)
   useEffect(() => {
@@ -147,14 +169,17 @@ export function NotificationProvider({ children }) {
     if (isLowVolt && !prevVoltageRef.current) {
       addNotification(
         "critical",
-        t("notif_voltage_title", "⚡ Low Grid Voltage Sag Alert"),
-        `Inverter AC voltage dropped to ${live.acVoltage} V. Grid instability detected.`
+        "notif_voltage_title",
+        "⚡ Low Grid Voltage Sag Alert",
+        "notif_voltage_desc",
+        "Inverter AC voltage dropped to {volt} V. Grid instability detected.",
+        { volt: live.acVoltage }
       );
       prevVoltageRef.current = true;
     } else if (!isLowVolt) {
       prevVoltageRef.current = false;
     }
-  }, [live?.acVoltage, addNotification, t]);
+  }, [live?.acVoltage, addNotification]);
 
   // 5. Battery triggers (< 20% or === 100%)
   useEffect(() => {
@@ -164,8 +189,11 @@ export function NotificationProvider({ children }) {
     if (batt <= 20 && !prevBatteryLowRef.current) {
       addNotification(
         "warning",
-        t("notif_battery_low_title", "Battery Level Low"),
-        `Storage capacity is at ${batt}%. Consider delaying heavy appliance usage.`
+        "notif_battery_low_title",
+        "Battery Level Low",
+        "notif_battery_low_desc",
+        "Storage capacity is at {charge}%. Consider delaying heavy appliance usage.",
+        { charge: batt }
       );
       prevBatteryLowRef.current = true;
     } else if (batt > 25) {
@@ -175,14 +203,17 @@ export function NotificationProvider({ children }) {
     if (batt >= 98 && !prevBatteryFullRef.current) {
       addNotification(
         "info",
-        t("notif_battery_full_title", "Battery Fully Charged"),
-        `Storage capacity reached 100%. Surplus power is exporting to the grid.`
+        "notif_battery_full_title",
+        "Battery Fully Charged",
+        "notif_battery_full_desc",
+        "Storage capacity reached 100%. Surplus power is exporting to the grid.",
+        { charge: 100 }
       );
       prevBatteryFullRef.current = true;
     } else if (batt < 95) {
       prevBatteryFullRef.current = false;
     }
-  }, [live?.battery, addNotification, t]);
+  }, [live?.battery, addNotification]);
 
   // 6. High Grid Import trigger (> 3 kW)
   useEffect(() => {
@@ -193,14 +224,17 @@ export function NotificationProvider({ children }) {
     if (isImportingHigh && !prevGridHighRef.current) {
       addNotification(
         "warning",
-        t("notif_grid_high_title", "High Grid Import"),
-        `Currently drawing ${Math.abs(gridNet).toFixed(1)} kW from grid during peak hours.`
+        "notif_grid_high_title",
+        "High Grid Import",
+        "notif_grid_high_desc",
+        "Currently drawing {grid} kW from grid during peak hours.",
+        { grid: Math.abs(gridNet).toFixed(1) }
       );
       prevGridHighRef.current = true;
     } else if (!isImportingHigh) {
       prevGridHighRef.current = false;
     }
-  }, [live?.gridNet, addNotification, t]);
+  }, [live?.gridNet, addNotification]);ddNotification, t]);
 
   // 7. ML Prediction Anomaly — fired externally via addNotification from MLPredictionCard
   // (The card calls addNotification when deviation > 20% is detected. No polling here.)

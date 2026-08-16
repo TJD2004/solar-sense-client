@@ -148,9 +148,9 @@ export default function SubsidyCalculator() {
               style={{ width: "100%", accentColor: "var(--saffron)", cursor: "pointer" }}
             />
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "var(--ink-500)", marginTop: 4 }}>
-              <span>1 kW (Small Home)</span>
-              <span>3 kW (Recommended)</span>
-              <span>10 kW (Large)</span>
+              <span>1 kW ({t("small_home", "Small Home")})</span>
+              <span>3 kW ({t("recommended", "Recommended")})</span>
+              <span>10 kW ({t("large", "Large")})</span>
             </div>
           </div>
 
@@ -190,7 +190,7 @@ export default function SubsidyCalculator() {
                     onClick={() => setCapacityKW(calculations.recommendedKW)}
                     style={{ background: "none", border: "none", color: "var(--saffron)", cursor: "pointer", textDecoration: "underline", marginLeft: 6 }}
                   >
-                    Set {calculations.recommendedKW} kW
+                    {t("btn_set_kw", "Set {val} kW").replace("{val}", calculations.recommendedKW)}
                   </button>
                 </span>
               </div>
@@ -224,7 +224,7 @@ export default function SubsidyCalculator() {
             <div style={{ fontSize: 11, color: calculations.roofSufficient ? "var(--india-green)" : "#ef4444", marginTop: 6, display: "flex", alignItems: "center", gap: 6 }}>
               <CheckCircle2 size={13} />
               <span>
-                Required: <strong>{calculations.roofAreaRequired} sq ft</strong> ({calculations.roofSufficient ? "Area is sufficient ✅" : "Insufficient space ⚠️"})
+                {t("required", "Required:")} <strong>{calculations.roofAreaRequired} sq ft</strong> ({calculations.roofSufficient ? t("area_sufficient", "Area is sufficient ✅") : t("insufficient_space", "Insufficient space ⚠️")})
               </span>
             </div>
           </div>
@@ -242,7 +242,7 @@ export default function SubsidyCalculator() {
                 data-active={category === "residential" || undefined}
                 style={{ flex: 1, justifyContent: "center", padding: "8px 12px" }}
               >
-                Residential Rooftop
+                {t("residential_rooftop", "Residential Rooftop")}
               </button>
               <button
                 type="button"
@@ -251,7 +251,7 @@ export default function SubsidyCalculator() {
                 data-active={category === "ghs" || undefined}
                 style={{ flex: 1, justifyContent: "center", padding: "8px 12px" }}
               >
-                GHS / RWA Society
+                {t("ghs_rwa_society", "GHS / RWA Society")}
               </button>
             </div>
           </div>
@@ -262,21 +262,21 @@ export default function SubsidyCalculator() {
           {/* Top 3 Result Cards */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
             <div className="panel" style={{ padding: 14, background: "rgba(255, 153, 51, 0.08)", borderColor: "rgba(255, 153, 51, 0.3)" }}>
-              <div style={{ fontSize: 11, color: "var(--ink-500)", marginBottom: 4 }}>Estimated Total Cost</div>
+              <div style={{ fontSize: 11, color: "var(--ink-500)", marginBottom: 4 }}>{t("estimated_total_cost", "Estimated Total Cost")}</div>
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: 18, color: "var(--ink-100)" }}>
                 ₹{calculations.totalCost.toLocaleString("en-IN")}
               </div>
             </div>
 
             <div className="panel" style={{ padding: 14, background: "rgba(31, 174, 92, 0.1)", borderColor: "rgba(31, 174, 92, 0.4)" }}>
-              <div style={{ fontSize: 11, color: "var(--india-green)", fontWeight: 600, marginBottom: 4 }}>Govt. Subsidy (Muft Bijli)</div>
+              <div style={{ fontSize: 11, color: "var(--india-green)", fontWeight: 600, marginBottom: 4 }}>{t("govt_subsidy_lbl", "Govt. Subsidy (Muft Bijli)")}</div>
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: 18, color: "var(--india-green)" }}>
                 ₹{calculations.subsidy.toLocaleString("en-IN")}
               </div>
             </div>
 
             <div className="panel" style={{ padding: 14, background: "rgba(18, 58, 107, 0.15)", borderColor: "var(--hairline)" }}>
-              <div style={{ fontSize: 11, color: "var(--ink-500)", marginBottom: 4 }}>Net Out-of-Pocket Cost</div>
+              <div style={{ fontSize: 11, color: "var(--ink-500)", marginBottom: 4 }}>{t("net_out_of_pocket", "Net Out-of-Pocket Cost")}</div>
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: 18, color: "var(--chakra-blue-light)" }}>
                 ₹{calculations.netCost.toLocaleString("en-IN")}
               </div>
@@ -292,8 +292,8 @@ export default function SubsidyCalculator() {
             {/* Progress Bar Visualization */}
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 6 }}>
-                <span>Govt Subsidy: <strong>{Math.round((calculations.subsidy / calculations.totalCost) * 100)}%</strong></span>
-                <span>You Pay: <strong>{Math.round((calculations.netCost / calculations.totalCost) * 100)}%</strong></span>
+                <span>{t("govt_subsidy", "Govt Subsidy:")} <strong>{Math.round((calculations.subsidy / calculations.totalCost) * 100)}%</strong></span>
+                <span>{t("you_pay", "You Pay:")} <strong>{Math.round((calculations.netCost / calculations.totalCost) * 100)}%</strong></span>
               </div>
               <div style={{ height: 10, borderRadius: 5, background: "var(--hairline)", overflow: "hidden", display: "flex" }}>
                 <div style={{ width: `${(calculations.subsidy / calculations.totalCost) * 100}%`, background: "var(--india-green)", transition: "width 0.4s ease" }} />
@@ -308,8 +308,8 @@ export default function SubsidyCalculator() {
                   <Sun size={18} color="var(--saffron)" />
                 </div>
                 <div>
-                  <div className="stat-value">{calculations.monthlyGenerationKWh} <span className="stat-unit">kWh/mo</span></div>
-                  <div className="stat-label">Est. Monthly Generation</div>
+                  <div className="stat-value">{calculations.monthlyGenerationKWh} <span className="stat-unit">{t("kwh_mo_unit", "kWh/mo")}</span></div>
+                  <div className="stat-label">{t("est_monthly_gen", "Est. Monthly Generation")}</div>
                 </div>
               </div>
 
@@ -318,8 +318,8 @@ export default function SubsidyCalculator() {
                   <IndianRupee size={18} color="var(--india-green)" />
                 </div>
                 <div>
-                  <div className="stat-value">₹{calculations.monthlySavingsINR.toLocaleString("en-IN")} <span className="stat-unit">/mo</span></div>
-                  <div className="stat-label">Est. Monthly Bill Savings</div>
+                  <div className="stat-value">₹{calculations.monthlySavingsINR.toLocaleString("en-IN")} <span className="stat-unit">{t("per_mo_unit", "/mo")}</span></div>
+                  <div className="stat-label">{t("est_monthly_savings", "Est. Monthly Bill Savings")}</div>
                 </div>
               </div>
 
@@ -328,8 +328,8 @@ export default function SubsidyCalculator() {
                   <ShieldCheck size={18} color="var(--chakra-blue-light)" />
                 </div>
                 <div>
-                  <div className="stat-value">{calculations.paybackYears} <span className="stat-unit">Years</span></div>
-                  <div className="stat-label">Payback Period</div>
+                  <div className="stat-value">{calculations.paybackYears} <span className="stat-unit">{t("years_unit", "Years")}</span></div>
+                  <div className="stat-label">{t("payback_period", "Payback Period")}</div>
                 </div>
               </div>
 
@@ -338,8 +338,8 @@ export default function SubsidyCalculator() {
                   <Zap size={18} color="var(--saffron-deep)" />
                 </div>
                 <div>
-                  <div className="stat-value">₹{calculations.annualSavingsINR.toLocaleString("en-IN")} <span className="stat-unit">/yr</span></div>
-                  <div className="stat-label">Est. Annual Financial Savings</div>
+                  <div className="stat-value">₹{calculations.annualSavingsINR.toLocaleString("en-IN")} <span className="stat-unit">{t("per_yr_unit", "/yr")}</span></div>
+                  <div className="stat-label">{t("est_annual_savings", "Est. Annual Financial Savings")}</div>
                 </div>
               </div>
             </div>
@@ -355,10 +355,16 @@ export default function SubsidyCalculator() {
             }}
           >
             <div style={{ fontWeight: 600, fontSize: 13, color: "var(--saffron)", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
-              <Info size={14} /> AI Subsidy Analysis Summary
+              <Info size={14} /> {t("ai_subsidy_summary_title", "AI Subsidy Summary")}
             </div>
             <p style={{ fontSize: 12, color: "var(--ink-300)", lineHeight: 1.5, margin: 0 }}>
-              Under the PM Surya Ghar scheme, a <strong>{capacityKW} kW</strong> solar system costs approx ₹{calculations.totalCost.toLocaleString("en-IN")}. With your <strong>₹{calculations.subsidy.toLocaleString("en-IN")} direct subsidy credit</strong>, your net investment is reduced to ₹{calculations.netCost.toLocaleString("en-IN")}. You will generate roughly <strong>{calculations.annualGenerationKWh.toLocaleString("en-IN")} units of free solar electricity every year</strong>, recovering your full investment in just <strong>{calculations.paybackYears} years</strong>!
+              {t("ai_subsidy_summary_desc", "Under the PM Surya Ghar scheme, a {capacity} kW solar system costs approx ₹{cost}. With your ₹{subsidy} direct subsidy credit, your net investment is reduced to ₹{netCost}. You will generate roughly {gen} units of free solar electricity every year, recovering your full investment in just {payback} years!")
+                .replace("{capacity}", capacityKW)
+                .replace("{cost}", calculations.totalCost.toLocaleString("en-IN"))
+                .replace("{subsidy}", calculations.subsidy.toLocaleString("en-IN"))
+                .replace("{netCost}", calculations.netCost.toLocaleString("en-IN"))
+                .replace("{gen}", calculations.annualGenerationKWh.toLocaleString("en-IN"))
+                .replace("{payback}", calculations.paybackYears)}
             </p>
           </div>
         </div>

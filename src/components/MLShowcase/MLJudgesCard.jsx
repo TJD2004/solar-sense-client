@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Brain, Award, Database, BarChart2, CheckCircle } from "lucide-react";
 import { fetchMLMetrics } from "../../services/mlApi.js";
+import { useLanguage } from "../../i18n/LanguageContext.jsx";
 import {
   BarChart,
   Bar,
@@ -11,31 +12,32 @@ import {
   Cell,
 } from "recharts";
 
-const METRIC_LABELS = {
-  mae: "MAE (kW)",
-  rmse: "RMSE (kW)",
-  r2_score: "R² Score",
-};
-
-const FEATURE_LABELS = {
-  irradiance: "Irradiance",
-  capacityKW: "Capacity (kW)",
-  temp: "Temperature",
-  hour: "Hour of Day",
-  month: "Month",
-  cloudCoverage: "Cloud Cover",
-  humidity: "Humidity",
-  windSpeed: "Wind Speed",
-};
-
 const FEATURE_COLORS = [
   "#1FA65C", "#EA580C", "#3B82F6", "#F59E0B",
   "#8B5CF6", "#06B6D4", "#EC4899", "#10B981"
 ];
 
 export default function MLJudgesCard() {
+  const { t } = useLanguage();
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const METRIC_LABELS = {
+    mae: t("tbl_hdr_mae", "MAE (kW) ↓"),
+    rmse: t("tbl_hdr_rmse", "RMSE (kW) ↓"),
+    r2_score: t("tbl_hdr_r2", "R² Score ↑"),
+  };
+
+  const FEATURE_LABELS = {
+    irradiance: t("irradiance", "Irradiance"),
+    capacityKW: t("capacityKW_lbl", "Capacity (kW)"),
+    temp: t("temp_lbl", "Temperature"),
+    hour: t("hour_lbl", "Hour of Day"),
+    month: t("month_lbl", "Month"),
+    cloudCoverage: t("cloud_coverage_lbl", "Cloud Cover"),
+    humidity: t("humidity_lbl", "Humidity"),
+    windSpeed: t("wind_speed_lbl", "Wind Speed"),
+  };
 
   useEffect(() => {
     fetchMLMetrics().then((data) => {
@@ -78,21 +80,21 @@ export default function MLJudgesCard() {
         </div>
         <div>
           <div style={{ fontWeight: 700, fontSize: 14, color: "var(--ink-100)" }}>
-            ML Model Performance
+            {t("ml_model_performance", "ML Model Performance")}
           </div>
           <div style={{ fontSize: 11, color: "var(--ink-300)", marginTop: 1 }}>
-            Trained with scikit-learn 1.9 on {metrics?.dataset?.total_samples?.toLocaleString() ?? "6,000"} synthetic solar samples
+            {t("ml_model_trained_on", "Trained with scikit-learn 1.9 on {samples} synthetic solar samples").replace("{samples}", metrics?.dataset?.total_samples?.toLocaleString() ?? "6,000")}
           </div>
         </div>
       </div>
 
       {loading ? (
         <div style={{ textAlign: "center", padding: "20px 0", color: "var(--ink-300)", fontSize: 13 }}>
-          Loading ML model metrics…
+          {t("loading_ml_metrics", "Loading ML model metrics…")}
         </div>
       ) : !metrics?.available ? (
         <div style={{ textAlign: "center", padding: "20px 0", color: "#EF4444", fontSize: 13 }}>
-          ML service offline — start the FastAPI microservice to view metrics.
+          {t("ml_service_offline", "ML service offline — start the FastAPI microservice to view metrics.")}
         </div>
       ) : (
         <>
@@ -106,10 +108,10 @@ export default function MLJudgesCard() {
             }}
           >
             {[
-              { label: "Total Samples", value: metrics.dataset.total_samples?.toLocaleString(), icon: <Database size={12} /> },
-              { label: "Train Set", value: `${metrics.dataset.train_samples?.toLocaleString()} (80%)`, icon: <BarChart2 size={12} /> },
-              { label: "Test Set", value: `${metrics.dataset.test_samples?.toLocaleString()} (20%)`, icon: <BarChart2 size={12} /> },
-              { label: "Features", value: metrics.dataset.features?.length, icon: <Award size={12} /> },
+              { label: t("total_samples", "Total Samples"), value: metrics.dataset.total_samples?.toLocaleString(), icon: <Database size={12} /> },
+              { label: t("train_set", "Train Set"), value: `${metrics.dataset.train_samples?.toLocaleString()} (80%)`, icon: <BarChart2 size={12} /> },
+              { label: t("test_set", "Test Set"), value: `${metrics.dataset.test_samples?.toLocaleString()} (20%)`, icon: <BarChart2 size={12} /> },
+              { label: t("features_lbl", "Features"), value: metrics.dataset.features?.length, icon: <Award size={12} /> },
             ].map(({ label, value, icon }) => (
               <div
                 key={label}
@@ -143,7 +145,7 @@ export default function MLJudgesCard() {
                 marginBottom: 10,
               }}
             >
-              Model Comparison
+              {t("model_comparison", "Model Comparison")}
             </div>
             <div style={{ overflowX: "auto" }}>
               <table
@@ -156,19 +158,19 @@ export default function MLJudgesCard() {
                 <thead>
                   <tr style={{ borderBottom: "1px solid var(--border-subtle)" }}>
                     <th style={{ textAlign: "left", padding: "6px 8px", color: "var(--ink-300)", fontWeight: 600 }}>
-                      Model
+                      {t("tbl_hdr_model", "Model")}
                     </th>
                     <th style={{ textAlign: "center", padding: "6px 8px", color: "var(--ink-300)", fontWeight: 600 }}>
-                      MAE (kW) ↓
+                      {t("tbl_hdr_mae", "MAE (kW) ↓")}
                     </th>
                     <th style={{ textAlign: "center", padding: "6px 8px", color: "var(--ink-300)", fontWeight: 600 }}>
-                      RMSE (kW) ↓
+                      {t("tbl_hdr_rmse", "RMSE (kW) ↓")}
                     </th>
                     <th style={{ textAlign: "center", padding: "6px 8px", color: "var(--ink-300)", fontWeight: 600 }}>
-                      R² Score ↑
+                      {t("tbl_hdr_r2", "R² Score ↑")}
                     </th>
                     <th style={{ textAlign: "center", padding: "6px 8px", color: "var(--ink-300)", fontWeight: 600 }}>
-                      Selected
+                      {t("tbl_hdr_selected", "Selected")}
                     </th>
                   </tr>
                 </thead>
@@ -195,7 +197,7 @@ export default function MLJudgesCard() {
                               borderRadius: 4,
                             }}
                           >
-                            WINNER
+                            {t("winner_badge", "WINNER")}
                           </span>
                         )}
                       </td>
@@ -230,7 +232,7 @@ export default function MLJudgesCard() {
                 marginBottom: 10,
               }}
             >
-              Feature Importances (Random Forest)
+              {t("feature_importances_title", "Feature Importances (Random Forest)")}
             </div>
             <div style={{ height: 160 }}>
               <ResponsiveContainer width="100%" height="100%">

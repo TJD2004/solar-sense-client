@@ -79,7 +79,7 @@ export default function Dashboard() {
               ? `☁️ ${t("alert_cloudy", "Cloud Cover / Low Irradiance Alert")} — ${live?.irradiance} W/m²`
               : scenario.id === "normal"
               ? t("anomaly_normal", "Production anomaly detected — output dropped sharply in the last interval.")
-              : `${scenario.emoji} ${t("anomaly_detected", "Production anomaly detected")} — ${scenario.label}`}
+              : `${scenario.emoji} ${t("anomaly_detected", "Production anomaly detected")} — ${t("scenario_" + scenario.id, scenario.label)}`}
           </div>
         )}
 

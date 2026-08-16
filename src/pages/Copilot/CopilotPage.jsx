@@ -56,7 +56,7 @@ function getStubReply(message, ctx, language) {
 
 export default function CopilotPage() {
   const ctx = useSimulation();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const [messages, setMessages] = useState([
     { role: "assistant", text: t("copilot_subtitle", "Ask me about your solar production, savings, or the best time to run something.") }
@@ -146,7 +146,7 @@ export default function CopilotPage() {
             >
               <Bot size={14} color="var(--saffron)" />
             </div>
-            <span style={{ fontSize: 12, color: "var(--ink-500)" }}>thinking…</span>
+            <span style={{ fontSize: 12, color: "var(--ink-500)" }}>{t("thinking", "thinking…")}</span>
           </div>
         )}
       </div>

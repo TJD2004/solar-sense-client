@@ -211,46 +211,70 @@ export default function NotificationDrawer() {
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {filteredNotifs.map((n) => (
-                <div
-                  key={n.id}
-                  onClick={() => markAsRead(n.id)}
-                  style={{
-                    padding: "12px 14px",
-                    borderRadius: 12,
-                    background: n.read ? "var(--navy-panel)" : "rgba(255, 153, 51, 0.08)",
-                    border: n.read ? "1px solid var(--hairline)" : "1px solid rgba(255, 153, 51, 0.3)",
-                    cursor: "pointer",
-                    transition: "all 0.15s ease",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-                    <div style={{ marginTop: 2 }}>{getIcon(n.type)}</div>
-                    <div style={{ flex: 1 }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          marginBottom: 4,
-                        }}
-                      >
-                        <div style={{ fontWeight: 600, fontSize: 13, color: "var(--ink-100)" }}>{n.title}</div>
-                        <span
+              {filteredNotifs.map((n) => {
+                // Resolve title and message dynamically using t()
+                const displayTitle = n.titleKey ? t(n.titleKey, n.titleFallback) : n.title;
+                let displayMessage = n.messageKey ? t(n.messageKey, n.messageFallback) : n.message;
+
+                // Handle string replacement parameters if arguments exist
+                if (n.messageArgs) {
+                  const resolvedArgs = { ...n.messageArgs };
+                  if (n.messageArgs.scenarioId) {
+                    resolvedArgs.scenario = t("scenario_" + n.messageArgs.scenarioId, n.messageArgs.scenarioFallback || n.messageArgs.label);
+                  }
+                  if (n.messageArgs.desc && n.messageArgs.scenarioId) {
+                    resolvedArgs.desc = t(n.messageArgs.scenarioId + "_desc", n.messageArgs.desc);
+                  }
+                  if (n.messageArgs.label && n.messageArgs.scenarioId) {
+                    resolvedArgs.label = t("scenario_" + n.messageArgs.scenarioId, n.messageArgs.label);
+                  }
+
+                  Object.entries(resolvedArgs).forEach(([key, val]) => {
+                    displayMessage = displayMessage.replace(new RegExp(`\\{${key}\\}`, "g"), val);
+                  });
+                }
+
+                return (
+                  <div
+                    key={n.id}
+                    onClick={() => markAsRead(n.id)}
+                    style={{
+                      padding: "12px 14px",
+                      borderRadius: 12,
+                      background: n.read ? "var(--navy-panel)" : "rgba(255, 153, 51, 0.08)",
+                      border: n.read ? "1px solid var(--hairline)" : "1px solid rgba(255, 153, 51, 0.3)",
+                      cursor: "pointer",
+                      transition: "all 0.15s ease",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                      <div style={{ marginTop: 2 }}>{getIcon(n.type)}</div>
+                      <div style={{ flex: 1 }}>
+                        <div
                           style={{
-                            fontFamily: "'JetBrains Mono', monospace",
-                            fontSize: 10,
-                            color: "var(--ink-500)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            marginBottom: 4,
                           }}
                         >
-                          {formatNotifTime(n.ts)}
-                        </span>
+                          <div style={{ fontWeight: 600, fontSize: 13, color: "var(--ink-100)" }}>{displayTitle}</div>
+                          <span
+                            style={{
+                              fontFamily: "'JetBrains Mono', monospace",
+                              fontSize: 10,
+                              color: "var(--ink-500)",
+                            }}
+                          >
+                            {formatNotifTime(n.ts)}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: 12, color: "var(--ink-300)", lineHeight: 1.4 }}>{displayMessage}</div>
                       </div>
-                      <div style={{ fontSize: 12, color: "var(--ink-300)", lineHeight: 1.4 }}>{n.message}</div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

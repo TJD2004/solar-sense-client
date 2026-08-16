@@ -49,8 +49,11 @@ export default function MLPredictionCard() {
     if (result.is_anomaly && !prevMLAnomalyRef.current) {
       addNotification(
         "critical",
+        "ml_anomaly_alert_title",
         "🤖 ML Anomaly Alert — Generation Below Forecast",
-        `Actual: ${result.actual_solar_kw?.toFixed(2)} kW vs Predicted: ${result.predicted_solar_kw} kW (${result.deviation_pct}% below forecast). Check panel health.`
+        "ml_anomaly_alert_msg",
+        "Actual: {actual} kW vs Predicted: {predicted} kW ({pct}% below forecast). Check panel health.",
+        { actual: result.actual_solar_kw?.toFixed(2), predicted: result.predicted_solar_kw, pct: result.deviation_pct }
       );
       prevMLAnomalyRef.current = true;
     } else if (!result.is_anomaly) {
@@ -119,10 +122,10 @@ export default function MLPredictionCard() {
           </div>
           <div>
             <div style={{ fontWeight: 700, fontSize: 14, color: "var(--ink-100)", letterSpacing: "-0.3px" }}>
-              ML Generation Forecast
+              {t("ml_gen_forecast", "ML Generation Forecast")}
             </div>
             <div style={{ fontSize: 11, color: "var(--ink-300)", marginTop: 1 }}>
-              Random Forest • R² = 0.9928 • scikit-learn
+              {t("ml_model_details", "Random Forest • R² = 0.9928 • scikit-learn")}
             </div>
           </div>
         </div>
@@ -141,10 +144,10 @@ export default function MLPredictionCard() {
             gap: 4,
             fontSize: 11,
           }}
-          title="Refresh prediction"
+          title={t("btn_refresh", "Refresh")}
         >
           <RefreshCw size={12} style={{ animation: loading ? "spin 1s linear infinite" : "none" }} />
-          {loading ? "Updating…" : "Refresh"}
+          {loading ? t("btn_updating", "Updating…") : t("btn_refresh", "Refresh")}
         </button>
       </div>
 
@@ -160,13 +163,13 @@ export default function MLPredictionCard() {
               textAlign: "center",
             }}
           >
-            <div style={{ fontSize: 11, color: "var(--ink-300)", marginBottom: 4 }}>ML Predicted</div>
+            <div style={{ fontSize: 11, color: "var(--ink-300)", marginBottom: 4 }}>{t("ml_predicted", "ML Predicted")}</div>
             <div style={{ fontSize: 22, fontWeight: 800, color: "var(--india-green)", letterSpacing: "-0.5px" }}>
               {prediction.predicted_solar_kw ?? "—"}
-              <span style={{ fontSize: 12, fontWeight: 500, marginLeft: 2 }}>kW</span>
+              <span style={{ fontSize: 12, fontWeight: 500, marginLeft: 2 }}>{t("kw_unit", "kW")}</span>
             </div>
             <div style={{ fontSize: 10, color: "var(--ink-300)", marginTop: 2 }}>
-              ±{((prediction.confidence_max - prediction.confidence_min) / 2).toFixed(2)} kW
+              ±{((prediction.confidence_max - prediction.confidence_min) / 2).toFixed(2)} {t("kw_unit", "kW")}
             </div>
           </div>
 
@@ -179,12 +182,12 @@ export default function MLPredictionCard() {
               textAlign: "center",
             }}
           >
-            <div style={{ fontSize: 11, color: "var(--ink-300)", marginBottom: 4 }}>Actual Now</div>
+            <div style={{ fontSize: 11, color: "var(--ink-300)", marginBottom: 4 }}>{t("actual_now", "Actual Now")}</div>
             <div style={{ fontSize: 22, fontWeight: 800, color: "var(--india-saffron)", letterSpacing: "-0.5px" }}>
               {prediction.actual_solar_kw?.toFixed(2) ?? live?.solar?.toFixed(2) ?? "—"}
-              <span style={{ fontSize: 12, fontWeight: 500, marginLeft: 2 }}>kW</span>
+              <span style={{ fontSize: 12, fontWeight: 500, marginLeft: 2 }}>{t("kw_unit", "kW")}</span>
             </div>
-            <div style={{ fontSize: 10, color: "var(--ink-300)", marginTop: 2 }}>Live telemetry</div>
+            <div style={{ fontSize: 10, color: "var(--ink-300)", marginTop: 2 }}>{t("live_telemetry_label", "Live telemetry")}</div>
           </div>
 
           {/* Deviation */}
@@ -197,7 +200,7 @@ export default function MLPredictionCard() {
               border: isAnomaly ? "1px solid rgba(239,68,68,0.3)" : "none",
             }}
           >
-            <div style={{ fontSize: 11, color: "var(--ink-300)", marginBottom: 4 }}>Deviation</div>
+            <div style={{ fontSize: 11, color: "var(--ink-300)", marginBottom: 4 }}>{t("deviation", "Deviation")}</div>
             <div style={{ fontSize: 22, fontWeight: 800, color: deviationColor, letterSpacing: "-0.5px" }}>
               {deviation !== null && deviation !== undefined ? `${deviation > 0 ? "+" : ""}${deviation}%` : "—"}
             </div>
@@ -205,12 +208,12 @@ export default function MLPredictionCard() {
               {isAnomaly ? (
                 <>
                   <AlertTriangle size={10} color="#EF4444" />
-                  <span style={{ fontSize: 10, color: "#EF4444" }}>Anomaly</span>
+                  <span style={{ fontSize: 10, color: "#EF4444" }}>{t("anomaly", "Anomaly")}</span>
                 </>
               ) : (
                 <>
                   <CheckCircle size={10} color="var(--india-green)" />
-                  <span style={{ fontSize: 10, color: "var(--india-green)" }}>Normal</span>
+                  <span style={{ fontSize: 10, color: "var(--india-green)" }}>{t("normal", "Normal")}</span>
                 </>
               )}
             </div>
@@ -218,7 +221,7 @@ export default function MLPredictionCard() {
         </div>
       ) : (
         <div style={{ textAlign: "center", padding: "20px 0", color: "var(--ink-300)", fontSize: 13 }}>
-          {loading ? "Fetching ML prediction…" : "ML service unavailable — ensure ml_service is running."}
+          {loading ? t("fetching_ml", "Fetching ML prediction…") : t("ml_unavailable", "ML service unavailable — ensure ml_service is running.")}
         </div>
       )}
 
@@ -239,7 +242,7 @@ export default function MLPredictionCard() {
           <AlertTriangle size={14} color="#EF4444" style={{ flexShrink: 0, marginTop: 2 }} />
           <div>
             <div style={{ fontWeight: 600, fontSize: 12, color: "#EF4444", marginBottom: 3 }}>
-              AI Anomaly Analysis
+              {t("ai_anomaly_analysis", "AI Anomaly Analysis")}
             </div>
             <div style={{ fontSize: 11.5, color: "var(--ink-200)", lineHeight: 1.55 }}>
               {prediction.ai_explanation}
@@ -265,7 +268,7 @@ export default function MLPredictionCard() {
             }}
           >
             <Activity size={11} />
-            Expected vs Actual Generation
+            {t("expected_vs_actual", "Expected vs Actual Generation")}
           </div>
           <div style={{ height: 140 }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -289,7 +292,7 @@ export default function MLPredictionCard() {
                     borderRadius: 8,
                     fontSize: 11,
                   }}
-                  formatter={(v, name) => [`${v} kW`, name === "predicted" ? "ML Predicted" : "Actual"]}
+                  formatter={(v, name) => [`${v} kW`, name === "predicted" ? t("ml_predicted", "ML Predicted") : t("actual", "Actual")]}
                 />
                 <Legend wrapperStyle={{ fontSize: 10 }} />
                 <Area
@@ -298,7 +301,7 @@ export default function MLPredictionCard() {
                   stroke="#1FA65C"
                   strokeWidth={1.5}
                   fill="url(#mlPredGrad)"
-                  name="Predicted"
+                  name={t("ml_predicted", "Predicted")}
                   dot={false}
                 />
                 <Area
@@ -307,7 +310,7 @@ export default function MLPredictionCard() {
                   stroke="#EA580C"
                   strokeWidth={1.5}
                   fill="url(#mlActualGrad)"
-                  name="Actual"
+                  name={t("actual", "Actual")}
                   dot={false}
                 />
               </AreaChart>
