@@ -1,6 +1,6 @@
 import { callOrFallback } from "./api.js";
 
-const BASE = import.meta.env.VITE_SERVER_URL || "http://localhost:4000";
+const BASE = import.meta.env.VITE_API_BASE_URL || "";
 
 /**
  * Fetch real-time ML solar generation prediction from the backend.
