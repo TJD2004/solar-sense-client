@@ -21,6 +21,13 @@ export default function VoiceSummaryButton() {
     }
   }, [language]);
 
+  // Prefetch voices on component mount
+  useEffect(() => {
+    if (window.speechSynthesis) {
+      window.speechSynthesis.getVoices();
+    }
+  }, []);
+
   // Construct text summary dynamically based on current live state & language
   const generateSummaryText = () => {
     if (!live) return "";
@@ -126,24 +133,51 @@ export default function VoiceSummaryButton() {
 
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
 
-    // Language voice mapping & explicit browser voice selection
+    // Language voice mapping & explicit browser voice selection (preferring female voice)
     try {
       const voices = synthRef.current.getVoices() || [];
+      
+      // Print available voices to console for transparent debugging
+      console.log("[VoiceSummary] Total available voices on this device:", voices.map((v) => `${v.name} (${v.lang})`));
+      
       let selectedVoice = null;
 
       if (language === "hi") {
         utterance.lang = "hi-IN";
-        selectedVoice = voices.find((v) => v.lang === "hi-IN" || v.lang.startsWith("hi"));
+        const hiVoices = voices.filter((v) => v.lang === "hi-IN" || v.lang.toLowerCase().startsWith("hi"));
+        // Prefer Microsoft Swara, Microsoft Kalpana, Google, or anything containing female
+        selectedVoice = hiVoices.find((v) => 
+          v.name.includes("Swara") || 
+          v.name.includes("Kalpana") || 
+          v.name.toLowerCase().includes("female") || 
+          v.name.includes("Google")
+        ) || hiVoices[0] || null;
       } else if (language === "mr") {
         utterance.lang = "mr-IN";
-        selectedVoice = voices.find((v) => v.lang === "mr-IN" || v.lang.startsWith("mr"));
+        const mrVoices = voices.filter((v) => v.lang === "mr-IN" || v.lang.toLowerCase().startsWith("mr"));
+        // Prefer Microsoft Aarohi, Google Marathi, or anything containing female
+        selectedVoice = mrVoices.find((v) => 
+          v.name.includes("Aarohi") || 
+          v.name.toLowerCase().includes("female") || 
+          v.name.includes("Google")
+        ) || mrVoices[0] || null;
       } else {
         utterance.lang = "en-IN";
-        selectedVoice = voices.find((v) => v.lang === "en-IN" || v.lang.startsWith("en"));
+        const enVoices = voices.filter((v) => v.lang === "en-IN" || v.lang.toLowerCase().startsWith("en"));
+        // Prefer Microsoft Heera, Microsoft Zira, Google, or any female voice
+        selectedVoice = enVoices.find((v) => 
+          v.name.includes("Heera") || 
+          v.name.includes("Zira") || 
+          v.name.toLowerCase().includes("female") || 
+          v.name.includes("Google")
+        ) || enVoices[0] || null;
       }
 
       if (selectedVoice) {
+        console.log(`[VoiceSummary] Selected voice: ${selectedVoice.name} (${selectedVoice.lang})`);
         utterance.voice = selectedVoice;
+      } else {
+        console.warn(`[VoiceSummary] No matching voice found for language: ${language}. Falling back to default system voice.`);
       }
     } catch (err) {
       console.warn("[VoiceSummary] Voice selection failed:", err);
