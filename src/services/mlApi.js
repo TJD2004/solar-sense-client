@@ -8,7 +8,7 @@ const BASE = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? "" : "h
  */
 export async function fetchMLPrediction(features = {}) {
   try {
-    const res = await fetch(`${BASE}/api/ml/predict`, {
+    const res = await fetch(`${BASE}/api/ml/predict?_=${Date.now()}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(features),
@@ -26,7 +26,7 @@ export async function fetchMLPrediction(features = {}) {
  */
 export async function fetchMLMetrics() {
   try {
-    const res = await fetch(`${BASE}/api/ml/metrics`);
+    const res = await fetch(`${BASE}/api/ml/metrics?_=${Date.now()}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     return { ...data, available: true };
