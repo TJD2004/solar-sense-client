@@ -178,6 +178,11 @@ export function SimulationProvider({ children }) {
     return { capacityKW: BASELINE_SYSTEM.capacityKW, dailyKWh };
   }, [usingFallback, backendStatus, dailyKWh]);
 
+  const overrides = useMemo(() => {
+    if (!usingFallback && backendStatus) return backendStatus.overrides || {};
+    return {};
+  }, [usingFallback, backendStatus]);
+
   // ---- log scenario / offline / anomaly transitions, whichever source
   // they come from, so the timeline reads the same regardless of mode.
   useEffect(() => {
@@ -245,6 +250,7 @@ export function SimulationProvider({ children }) {
       anomalyActive,
       transientBlip,
       baselineSystem,
+      overrides,
       // game-like / real-time extras
       connection, // "standalone" | "connecting" | "live" | "reconnecting" | "fallback"
       isLive: connection === "live",
@@ -266,6 +272,7 @@ export function SimulationProvider({ children }) {
       anomalyActive,
       transientBlip,
       baselineSystem,
+      overrides,
       connection,
       eventLog,
     ]

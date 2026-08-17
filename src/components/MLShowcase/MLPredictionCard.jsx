@@ -17,7 +17,7 @@ import {
 const HISTORY_LIMIT = 20;
 
 export default function MLPredictionCard() {
-  const { live } = useSimulation();
+  const { live, overrides } = useSimulation();
   const { t } = useLanguage();
   const { addNotification } = useNotifications();
 
@@ -31,12 +31,12 @@ export default function MLPredictionCard() {
     if (!live) return;
     setLoading(true);
     const result = await fetchMLPrediction({
-      temp: live.panelTemp ?? live.ambientTemp ?? 28,
-      irradiance: live.irradiance ?? 800,
-      cloudCoverage: 15,
-      humidity: 50,
-      windSpeed: 10,
-      capacityKW: 5,
+      temp: overrides?.temp ?? live.ambientTemp ?? live.panelTemp ?? 28,
+      irradiance: overrides?.irradiance ?? live.irradiance ?? 800,
+      cloudCoverage: overrides?.cloudCoverage ?? 15,
+      humidity: overrides?.humidity ?? 50,
+      windSpeed: overrides?.windSpeed ?? 10,
+      capacityKW: overrides?.capacityKW ?? 5,
     });
     setLoading(false);
 
@@ -121,6 +121,26 @@ export default function MLPredictionCard() {
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
           <span>{loading ? t("btn_updating", "Updating…") : t("btn_refresh", "Refresh")}</span>
         </button>
+      </div>
+
+      {/* Dynamic Input Features row */}
+      <div className="flex flex-wrap items-center gap-2 text-[10px] text-slate-500 bg-slate-50 border border-slate-100 rounded-xl p-2.5">
+        <span className="font-bold uppercase tracking-wider text-[9px] text-slate-400 mr-1">{t("ml_inputs", "Inputs")}:</span>
+        <span className="bg-white border border-slate-200 px-2 py-0.5 rounded-md font-mono-num">
+          ☀️ {overrides?.irradiance ?? live?.irradiance ?? 800} W/m²
+        </span>
+        <span className="bg-white border border-slate-200 px-2 py-0.5 rounded-md font-mono-num">
+          🌡️ {overrides?.temp ?? live?.panelTemp ?? 30}°C
+        </span>
+        <span className="bg-white border border-slate-200 px-2 py-0.5 rounded-md font-mono-num">
+          ☁️ {overrides?.cloudCoverage ?? 15}%
+        </span>
+        <span className="bg-white border border-slate-200 px-2 py-0.5 rounded-md font-mono-num">
+          💧 {overrides?.humidity ?? 50}%
+        </span>
+        <span className="bg-white border border-slate-200 px-2 py-0.5 rounded-md font-mono-num">
+          💨 {overrides?.windSpeed ?? 10} km/h
+        </span>
       </div>
 
       {/* Main Metrics Row */}
