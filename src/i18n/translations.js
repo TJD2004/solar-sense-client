@@ -446,6 +446,7 @@ export const translations = {
     prompt_battery_life: "How to maximize battery storage life?",
     prompt_savings: "How much money did I save this month?",
     prompt_charge_ev: "When is the best time to charge my EV?",
+    yield_consumption_chart_title: "Yield & Consumption Multi-Axis Curve",
   },
 
   hi: {
@@ -895,6 +896,7 @@ export const translations = {
     prompt_battery_life: "बैटरी भंडारण जीवन को कैसे अधिकतम करें?",
     prompt_savings: "मैंने इस महीने कितने पैसे बचाए?",
     prompt_charge_ev: "मेरी ईवी चार्ज करने का सबसे अच्छा समय कब है?",
+    yield_consumption_chart_title: "उत्पादन और खपत बहु-अक्षीय वक्र",
   },
 
   mr: {
@@ -1344,5 +1346,6 @@ export const translations = {
     prompt_battery_life: "बॅटरी साठवणूक आयुष्य कसे वाढवायचे?",
     prompt_savings: "मी या महिन्यात किती पैसे वाचवले?",
     prompt_charge_ev: "माझी ईव्ही चार्ज करण्यासाठी सर्वोत्तम वेळ कोणती आहे?",
+    yield_consumption_chart_title: "उत्पादन आणि वापर बहु-अक्षीय वक्र",
   },
 };

@@ -92,7 +92,7 @@ export default function Analytics() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2 text-sm font-bold text-slate-800 tracking-wide uppercase font-display">
             <Activity className="w-4 h-4 text-sky-500" />
-            <span>Yield & Consumption Multi-Axis Curve</span>
+            <span>{t("yield_consumption_chart_title", "Yield & Consumption Multi-Axis Curve")}</span>
           </div>
         </div>
 
