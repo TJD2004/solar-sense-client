@@ -79,10 +79,10 @@ export default function MLJudgesCard() {
           {/* Dataset Info Grid */}
           <div className="grid grid-cols-4 gap-2">
             {[
-              { label: t("total_samples", "Samples"), value: metrics.dataset.total_samples?.toLocaleString(), icon: <Database className="w-3 h-3" /> },
-              { label: t("train_set", "Train"), value: `${metrics.dataset.train_samples?.toLocaleString()}`, icon: <BarChart2 className="w-3 h-3" /> },
-              { label: t("test_set", "Test"), value: `${metrics.dataset.test_samples?.toLocaleString()}`, icon: <BarChart2 className="w-3 h-3" /> },
-              { label: t("features_lbl", "Features"), value: metrics.dataset.features?.length, icon: <Award className="w-3 h-3" /> },
+              { label: t("total_samples", "Samples"), value: metrics?.dataset?.total_samples?.toLocaleString() ?? "N/A", icon: <Database className="w-3 h-3" /> },
+              { label: t("train_set", "Train"), value: metrics?.dataset?.train_samples?.toLocaleString() ?? "N/A", icon: <BarChart2 className="w-3 h-3" /> },
+              { label: t("test_set", "Test"), value: metrics?.dataset?.test_samples?.toLocaleString() ?? "N/A", icon: <BarChart2 className="w-3 h-3" /> },
+              { label: t("features_lbl", "Features"), value: metrics?.dataset?.features?.length ?? 0, icon: <Award className="w-3 h-3" /> },
             ].map(({ label, value, icon }) => (
               <div key={label} className="bg-slate-50 border border-slate-100 rounded-xl p-2 text-center space-y-0.5">
                 <div className="flex items-center justify-center gap-1 text-sky-600 text-[10px] font-bold uppercase tracking-wider">
@@ -111,8 +111,8 @@ export default function MLJudgesCard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 font-mono-num">
-                  {Object.values(metrics.models).map((model) => (
-                    <tr key={model.name} className={model.selected ? "bg-emerald-50/50 font-bold" : "text-slate-600"}>
+                  {Object.values(metrics?.models || {}).map((model) => (
+                    <tr key={model.name} className={model?.selected ? "bg-emerald-50/50 font-bold" : "text-slate-600"}>
                       <td className="py-2 font-sans font-semibold text-slate-900 flex items-center gap-2">
                         <span>{model.name}</span>
                         {model.selected && (
