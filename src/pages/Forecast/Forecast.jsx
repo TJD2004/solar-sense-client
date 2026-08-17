@@ -8,7 +8,7 @@ import { useSimulation } from "../../context/SimulationContext.jsx";
 import { useLanguage } from "../../i18n/LanguageContext.jsx";
 
 export default function Forecast() {
-  const { baselineSystem, initializing } = useSimulation();
+  const { baselineSystem, initializing, live, overrides } = useSimulation();
   const { t } = useLanguage();
   const [nextHours, setNextHours] = useState(() => forecastNextHours());
   const [tomorrowKWh, setTomorrowKWh] = useState(() => forecastTomorrowKWh());
@@ -31,7 +31,7 @@ export default function Forecast() {
     return () => {
       cancelled = true;
     };
-  }, [baselineSystem.dailyKWh]);
+  }, [baselineSystem.dailyKWh, overrides]);
 
   if (initializing) {
     return <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-soft">Loading forecast…</div>;
@@ -73,7 +73,10 @@ export default function Forecast() {
                 <Sun className="w-4 h-4 text-amber-500" />
                 <span>{t("irradiance_lbl", "Irradiance")}</span>
               </div>
-              <div className="text-lg font-bold font-mono-num text-slate-900">895 <span className="text-xs font-sans text-slate-500">W/m²</span></div>
+              <div className="text-lg font-bold font-mono-num text-slate-900">
+                {overrides?.irradiance ?? live?.irradiance ?? 895}{" "}
+                <span className="text-xs font-sans text-slate-500">W/m²</span>
+              </div>
             </div>
 
             <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
@@ -81,7 +84,10 @@ export default function Forecast() {
                 <Thermometer className="w-4 h-4 text-rose-500" />
                 <span>{t("panel_temp_lbl", "Panel Temp")}</span>
               </div>
-              <div className="text-lg font-bold font-mono-num text-slate-900">32.4 <span className="text-xs font-sans text-slate-500">°C</span></div>
+              <div className="text-lg font-bold font-mono-num text-slate-900">
+                {overrides?.temp ?? live?.panelTemp ?? 32.4}{" "}
+                <span className="text-xs font-sans text-slate-500">°C</span>
+              </div>
             </div>
 
             <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
@@ -89,7 +95,10 @@ export default function Forecast() {
                 <Wind className="w-4 h-4 text-sky-500" />
                 <span>{t("wind_speed_lbl", "Wind Speed")}</span>
               </div>
-              <div className="text-lg font-bold font-mono-num text-slate-900">14.2 <span className="text-xs font-sans text-slate-500">km/h</span></div>
+              <div className="text-lg font-bold font-mono-num text-slate-900">
+                {overrides?.windSpeed ?? 14.2}{" "}
+                <span className="text-xs font-sans text-slate-500">km/h</span>
+              </div>
             </div>
 
             <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
@@ -97,7 +106,10 @@ export default function Forecast() {
                 <Droplets className="w-4 h-4 text-blue-500" />
                 <span>{t("humidity_lbl", "Humidity")}</span>
               </div>
-              <div className="text-lg font-bold font-mono-num text-slate-900">42 <span className="text-xs font-sans text-slate-500">%</span></div>
+              <div className="text-lg font-bold font-mono-num text-slate-900">
+                {overrides?.humidity ?? 42}{" "}
+                <span className="text-xs font-sans text-slate-500">%</span>
+              </div>
             </div>
           </div>
 
