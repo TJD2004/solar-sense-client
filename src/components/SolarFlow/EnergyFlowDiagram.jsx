@@ -1,7 +1,9 @@
 import React from "react";
 import { Sun, Home, Battery, Zap, Cpu, Activity, ShieldCheck, ArrowRightLeft } from "lucide-react";
+import { useLanguage } from "../../i18n/LanguageContext.jsx";
 
 export default function EnergyFlowDiagram({ solar = 0, home = 0, battery = 0, grid = 0 }) {
+  const { t } = useLanguage();
   const s = parseFloat(solar) || 0;
   const h = parseFloat(home) || 0;
   const b = parseFloat(battery) || 0;
@@ -146,7 +148,7 @@ export default function EnergyFlowDiagram({ solar = 0, home = 0, battery = 0, gr
 
           {/* Typography */}
           <text x="-45" y="-8" className="text-[10px] font-extrabold fill-amber-900 font-display tracking-wider">
-            SOLAR PV ARRAY
+            {t("node_solar_pv", "SOLAR PV ARRAY")}
           </text>
           <text x="-45" y="12" className="text-base font-extrabold fill-slate-900 font-mono-num">
             {s.toFixed(2)} <tspan className="text-xs font-semibold fill-slate-500 font-sans">kW</tspan>
@@ -155,7 +157,7 @@ export default function EnergyFlowDiagram({ solar = 0, home = 0, battery = 0, gr
           {/* Mini Status Tag */}
           <rect x="52" y="-18" width="48" height="16" rx="8" fill="#FEF3C7" stroke="#FCD34D" strokeWidth="1" />
           <text x="76" y="-7" textAnchor="middle" className="text-[9px] font-bold fill-amber-800 font-display">
-            {isSolarGenerating ? "ACTIVE" : "IDLE"}
+            {isSolarGenerating ? t("status_active", "ACTIVE") : t("status_idle", "IDLE")}
           </text>
         </g>
 
@@ -175,7 +177,7 @@ export default function EnergyFlowDiagram({ solar = 0, home = 0, battery = 0, gr
           {/* Inverter Label Badge */}
           <rect x="-65" y="34" width="130" height="20" rx="10" fill="#1E293B" />
           <text x="0" y="48" textAnchor="middle" className="text-[10px] font-extrabold fill-white font-display tracking-wide">
-            MPPT HUB · 98.4%
+            {t("node_mppt_hub", "MPPT HUB")} · 98.4%
           </text>
         </g>
 
@@ -189,7 +191,7 @@ export default function EnergyFlowDiagram({ solar = 0, home = 0, battery = 0, gr
           </foreignObject>
 
           <text x="-36" y="-8" className="text-[10px] font-extrabold fill-sky-950 font-display tracking-wider">
-            HOME LOAD
+            {t("node_home_load", "HOME LOAD")}
           </text>
           <text x="-36" y="12" className="text-sm font-extrabold fill-slate-900 font-mono-num">
             {h.toFixed(2)} <tspan className="text-xs font-semibold fill-slate-500 font-sans">kW</tspan>
@@ -206,10 +208,10 @@ export default function EnergyFlowDiagram({ solar = 0, home = 0, battery = 0, gr
           </foreignObject>
 
           <text x="-36" y="-8" className="text-[10px] font-extrabold fill-emerald-950 font-display tracking-wider">
-            STORAGE BESS
+            {t("node_storage_bess", "STORAGE BESS")}
           </text>
           <text x="-36" y="12" className="text-sm font-extrabold fill-slate-900 font-mono-num">
-            {b}% <tspan className="text-xs font-semibold fill-emerald-600 font-sans">{isCharging ? "Charging" : "Backup"}</tspan>
+            {b}% <tspan className="text-xs font-semibold fill-emerald-600 font-sans">{isCharging ? t("status_charging", "Charging") : t("status_backup", "Backup")}</tspan>
           </text>
         </g>
 
@@ -223,7 +225,7 @@ export default function EnergyFlowDiagram({ solar = 0, home = 0, battery = 0, gr
           </foreignObject>
 
           <text x="-36" y="-8" className="text-[10px] font-extrabold fill-purple-950 font-display tracking-wider">
-            GRID INTERFACE
+            {t("node_grid_interface", "GRID INTERFACE")}
           </text>
           <text x="-36" y="12" className="text-sm font-extrabold fill-slate-900 font-mono-num">
             {g >= 0 ? `+${g.toFixed(2)}` : g.toFixed(2)} <tspan className="text-xs font-semibold fill-slate-500 font-sans">kW</tspan>
@@ -235,24 +237,24 @@ export default function EnergyFlowDiagram({ solar = 0, home = 0, battery = 0, gr
       <div className="w-full bg-slate-50/80 border border-slate-200/80 rounded-xl px-4 py-2.5 flex items-center justify-between flex-wrap gap-2 text-xs">
         <div className="flex items-center gap-2 font-bold text-slate-700 font-display">
           <Activity className="w-4 h-4 text-blue-600" />
-          <span>Real-Time Power Balance Matrix:</span>
+          <span>{t("power_balance_matrix", "Real-Time Power Balance Matrix:")}</span>
         </div>
 
         <div className="flex items-center gap-3 font-mono-num font-bold text-slate-800 text-xs">
           <span className="text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-            ☀️ {s.toFixed(2)} kW Solar
+            ☀️ {s.toFixed(2)} kW {t("solar_label", "Solar")}
           </span>
           <span className="text-slate-400">=</span>
           <span className="text-sky-600 bg-sky-50 px-2 py-0.5 rounded border border-sky-200">
-            🏠 {h.toFixed(2)} kW Load
+            🏠 {h.toFixed(2)} kW {t("load_label", "Load")}
           </span>
           <span className="text-slate-400">+</span>
           <span className="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-            🔋 {b}% BESS
+            🔋 {b}% {t("bess_label", "BESS")}
           </span>
           <span className="text-slate-400">+</span>
           <span className="text-purple-600 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
-            ⚡ {g >= 0 ? `+${g.toFixed(2)}` : g.toFixed(2)} kW Grid
+            ⚡ {g >= 0 ? `+${g.toFixed(2)}` : g.toFixed(2)} kW {t("grid_label", "Grid")}
           </span>
         </div>
       </div>

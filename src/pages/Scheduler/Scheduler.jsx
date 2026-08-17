@@ -123,13 +123,13 @@ export default function Scheduler() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold text-slate-900 font-display">Appliance Energy Scheduler</h1>
+                <h1 className="text-lg font-bold text-slate-900 font-display">{t("scheduler_title", "Appliance Energy Scheduler")}</h1>
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
-                  Solar Optimized
+                  {t("solar_optimized_lbl", "Solar Optimized")}
                 </span>
               </div>
               <p className="text-xs text-slate-500 font-medium mt-0.5">
-                Run heavy home appliances during peak sunny hours to use 100% free solar energy and lower your monthly bill.
+                {t("scheduler_subtitle", "Run heavy home appliances during peak sunny hours to use 100% free solar energy and lower your monthly bill.")}
               </p>
             </div>
           </div>
@@ -137,11 +137,11 @@ export default function Scheduler() {
           {/* Metric Summary */}
           <div className="flex items-center gap-3">
             <div className="bg-slate-50 border border-slate-200/80 rounded-xl px-3.5 py-2 text-right">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 font-display">Total Power Load</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 font-display">{t("total_power_load", "Total Power Load")}</div>
               <div className="text-sm font-extrabold text-slate-900 font-mono-num">{totalScheduledKW} kW</div>
             </div>
             <div className="bg-emerald-50 border border-emerald-200/80 rounded-xl px-3.5 py-2 text-right">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 font-display">Estimated Daily Savings</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 font-display">{t("est_daily_savings", "Estimated Daily Savings")}</div>
               <div className="text-sm font-extrabold text-emerald-700 font-mono-num">~{totalSavedKWh} kWh</div>
             </div>
           </div>
@@ -155,11 +155,11 @@ export default function Scheduler() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm font-bold text-slate-800 font-display">
               <MoveHorizontal className="w-4 h-4 text-amber-500" />
-              <span>Daily Solar Schedule (06:00 to 18:00)</span>
+              <span>{t("daily_solar_schedule", "Daily Solar Schedule (06:00 to 18:00)")}</span>
             </div>
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200">
               <Clock className="w-3.5 h-3.5 text-amber-500" />
-              <span>Peak Sun Hours</span>
+              <span>{t("peak_sun_hours", "Peak Sun Hours")}</span>
             </div>
           </div>
 
@@ -177,7 +177,7 @@ export default function Scheduler() {
             {initializing ? (
               <PanelSkeleton rows={3} />
             ) : recommendations.length === 0 ? (
-              <EmptyState title="No appliances added yet" message="Add an appliance on the right to see its recommended solar running time." />
+              <EmptyState title={t("no_appliances_added", "No appliances added yet")} message={t("no_appliances_desc", "Add an appliance on the right to see its recommended solar running time.")} />
             ) : (
               <div className="space-y-4">
                 {recommendations.map((a) => {
@@ -188,7 +188,7 @@ export default function Scheduler() {
                         <div className="flex items-center gap-2">
                           <h4 className="font-bold text-slate-900 text-sm font-display">{a.name}</h4>
                           <span className="text-xs font-medium text-slate-600 bg-white px-2 py-0.5 rounded border border-slate-200">
-                            {a.powerKW} kW · {a.durationHours} hrs
+                            {t("appliance_details", "{power} kW · {duration} hr run").replace("{power}", a.powerKW).replace("{duration}", a.durationHours)}
                           </span>
                         </div>
 
@@ -199,7 +199,7 @@ export default function Scheduler() {
                           </div>
                           <div className="flex items-center gap-1 text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
                             <TrendingDown className="w-3.5 h-3.5 text-emerald-600" />
-                            <span>Saves {a.recommendation?.reductionKWh ?? 1.2} kWh</span>
+                            <span>{t("saves_lbl", "Saves")} {a.recommendation?.reductionKWh ?? 1.2} kWh</span>
                           </div>
                           <button
                             type="button"
@@ -240,7 +240,7 @@ export default function Scheduler() {
                         <div className="bg-amber-50/60 border border-amber-200/80 rounded-lg p-3 text-xs text-amber-950 flex items-start gap-2">
                           <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                           <div className="flex-1">
-                            <span className="font-bold text-amber-900">Recommended Time: </span>
+                            <span className="font-bold text-amber-900">{t("recommended_time_lbl", "Recommended Time:")} </span>
                             <span>{a.recommendation.explanation}</span>
                           </div>
                         </div>
@@ -257,17 +257,17 @@ export default function Scheduler() {
         <div className="lg:col-span-4 bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] space-y-4 h-fit">
           <div className="flex items-center gap-2 text-sm font-bold text-slate-800 font-display">
             <Plus className="w-4 h-4 text-amber-500" />
-            <span>Add New Appliance</span>
+            <span>{t("add_new_appliance", "Add New Appliance")}</span>
           </div>
           <p className="text-xs text-slate-500 font-medium">
-            Enter appliance power rating and operating time to find the best low-cost running window.
+            {t("add_appliance_sub", "Enter appliance power rating and operating time to find the best low-cost running window.")}
           </p>
 
           <form onSubmit={addAppliance} noValidate className="space-y-3 pt-2">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Appliance Name</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">{t("appliance_name_lbl", "Appliance Name")}</label>
               <input
-                placeholder="e.g. Washing Machine, EV Charger"
+                placeholder={t("appliance_placeholder", "e.g. Washing Machine, EV Charger")}
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:bg-white outline-none focus:border-amber-500 transition-colors"
@@ -276,9 +276,9 @@ export default function Scheduler() {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Power (kW)</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">{t("power_kw_lbl", "Power (kW)")}</label>
                 <input
-                  placeholder="e.g. 1.5"
+                  placeholder={t("power_placeholder", "e.g. 1.5")}
                   type="number"
                   step="0.1"
                   min="0"
@@ -288,9 +288,9 @@ export default function Scheduler() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Duration (Hours)</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">{t("duration_hours_lbl", "Duration (Hours)")}</label>
                 <input
-                  placeholder="e.g. 2.0"
+                  placeholder={t("duration_placeholder", "e.g. 2.0")}
                   type="number"
                   step="0.25"
                   min="0"
@@ -307,7 +307,7 @@ export default function Scheduler() {
               type="submit"
               className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 shadow-md shadow-blue-500/20 transition-all"
             >
-              <Plus className="w-4 h-4" /> Calculate Best Time & Add
+              <Plus className="w-4 h-4" /> {t("calc_add_btn", "Calculate Best Time & Add")}
             </button>
           </form>
         </div>

@@ -52,10 +52,10 @@ export default function SubsidyCalculator() {
   }, [capacityKW, category, monthlyBill, roofArea]);
 
   const SCHEME_STEPS = [
-    { step: 1, title: "Portal Registration", desc: "Register on PM Surya Ghar portal with DISCOM consumer number." },
-    { step: 2, title: "Feasibility Approval", desc: "DISCOM approves technical rooftop solar feasibility." },
-    { step: 3, title: "Vendor Installation", desc: "Registered vendor installs ALMM certified solar panels & inverter." },
-    { step: 4, title: "Net Metering & Subsidy", desc: "Net meter installed; direct subsidy credited to bank account." },
+    { step: 1, title: t("step1_title", "Portal Registration"), desc: t("step1_desc", "Register on PM Surya Ghar portal with DISCOM consumer number.") },
+    { step: 2, title: t("step2_title", "Feasibility Approval"), desc: t("step2_desc", "DISCOM approves technical rooftop solar feasibility.") },
+    { step: 3, title: t("step3_title", "Vendor Installation"), desc: t("step3_desc", "Registered vendor installs ALMM certified solar panels & inverter.") },
+    { step: 4, title: t("step4_title", "Net Metering & Subsidy"), desc: t("step4_desc", "Net meter installed; direct subsidy credited to bank account.") },
   ];
 
   return (
@@ -92,7 +92,7 @@ export default function SubsidyCalculator() {
       <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)]">
         <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wide font-display mb-4 flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>Step-by-Step Subsidy Disbursement Process Tracker</span>
+          <span>{t("subsidy_tracker_title", "Step-by-Step Subsidy Disbursement Process Tracker")}</span>
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -115,7 +115,7 @@ export default function SubsidyCalculator() {
         <div className="lg:col-span-5 bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] space-y-5">
           <div className="flex items-center gap-2 text-sm font-bold text-slate-800 uppercase tracking-wide font-display">
             <Calculator className="w-4 h-4 text-amber-500" />
-            <span>Rooftop System Inputs</span>
+            <span>{t("rooftop_inputs_title", "Rooftop System Inputs")}</span>
           </div>
 
           {/* System Capacity Slider */}
@@ -134,9 +134,9 @@ export default function SubsidyCalculator() {
               className="w-full accent-blue-600 cursor-pointer"
             />
             <div className="flex justify-between text-[11px] text-slate-500 font-medium">
-              <span>1 kW (Small Home)</span>
-              <span>3 kW (Recommended)</span>
-              <span>10 kW (Large)</span>
+              <span>{t("capacity_1kw", "1 kW (Small Home)")}</span>
+              <span>{t("capacity_3kw", "3 kW (Recommended)")}</span>
+              <span>{t("capacity_10kw", "10 kW (Large)")}</span>
             </div>
           </div>
 
@@ -172,7 +172,7 @@ export default function SubsidyCalculator() {
             />
             <div className="text-xs font-medium text-emerald-600 flex items-center gap-1 mt-1">
               <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Required: {calculations.roofAreaRequired} sq ft ({calculations.roofSufficient ? "Area is sufficient ✅" : "Insufficient space ⚠️"})</span>
+              <span>{t("roof_area_required_lbl", "Required:")} {calculations.roofAreaRequired} sq ft ({calculations.roofSufficient ? t("roof_area_sufficient", "Area is sufficient ✅") : t("roof_area_insufficient", "Insufficient space ⚠️")})</span>
             </div>
           </div>
 
@@ -187,7 +187,7 @@ export default function SubsidyCalculator() {
                   category === "residential" ? "bg-blue-600 text-white shadow-md shadow-blue-500/20" : "bg-slate-50 text-slate-700 border border-slate-200 hover:bg-blue-50 hover:text-blue-600"
                 }`}
               >
-                Residential Rooftop
+                {t("category_residential", "Residential Rooftop")}
               </button>
               <button
                 type="button"
@@ -196,7 +196,7 @@ export default function SubsidyCalculator() {
                   category === "ghs" ? "bg-blue-600 text-white shadow-md shadow-blue-500/20" : "bg-slate-50 text-slate-700 border border-slate-200 hover:bg-blue-50 hover:text-blue-600"
                 }`}
               >
-                GHS / RWA Society
+                {t("category_ghs", "GHS / RWA Society")}
               </button>
             </div>
           </div>
@@ -208,17 +208,17 @@ export default function SubsidyCalculator() {
           {/* Top 3 Result Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)]">
-              <div className="text-xs text-slate-500 font-semibold mb-1">Estimated Cost</div>
+              <div className="text-xs text-slate-500 font-semibold mb-1">{t("estimated_cost_lbl", "Estimated Cost")}</div>
               <div className="text-xl font-bold font-mono-num text-slate-900">₹{calculations.totalCost.toLocaleString("en-IN")}</div>
             </div>
 
             <div className="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4 shadow-xs">
-              <div className="text-xs text-emerald-800 font-bold mb-1">Govt Subsidy Credit</div>
+              <div className="text-xs text-emerald-800 font-bold mb-1">{t("gov_subsidy_credit_lbl", "Govt Subsidy Credit")}</div>
               <div className="text-xl font-bold font-mono-num text-emerald-700">₹{calculations.subsidy.toLocaleString("en-IN")}</div>
             </div>
 
             <div className="bg-sky-50/70 border border-sky-200 rounded-2xl p-4 shadow-xs">
-              <div className="text-xs text-sky-800 font-bold mb-1">Net Investment</div>
+              <div className="text-xs text-sky-800 font-bold mb-1">{t("net_investment_lbl", "Net Investment")}</div>
               <div className="text-xl font-bold font-mono-num text-sky-700">₹{calculations.netCost.toLocaleString("en-IN")}</div>
             </div>
           </div>
@@ -227,27 +227,27 @@ export default function SubsidyCalculator() {
           <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] space-y-4">
             <div className="flex items-center gap-2 text-sm font-bold text-slate-800 uppercase tracking-wide font-display">
               <Zap className="w-4 h-4 text-amber-500" />
-              <span>ROI Payback & Financial Yield Matrix</span>
+              <span>{t("roi_matrix_title", "ROI Payback & Financial Yield Matrix")}</span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
-                <div className="text-xs text-slate-500 font-medium mb-1">Monthly Gen</div>
+                <div className="text-xs text-slate-500 font-medium mb-1">{t("monthly_gen_lbl", "Monthly Gen")}</div>
                 <div className="text-base font-bold font-mono-num text-slate-900">{calculations.monthlyGenerationKWh} <span className="text-xs font-sans">kWh</span></div>
               </div>
 
               <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
-                <div className="text-xs text-slate-500 font-medium mb-1">Monthly Savings</div>
+                <div className="text-xs text-slate-500 font-medium mb-1">{t("monthly_savings_lbl", "Monthly Savings")}</div>
                 <div className="text-base font-bold font-mono-num text-emerald-700">₹{calculations.monthlySavingsINR.toLocaleString("en-IN")}</div>
               </div>
 
               <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
-                <div className="text-xs text-slate-500 font-medium mb-1">Payback Period</div>
-                <div className="text-base font-bold font-mono-num text-amber-600">{calculations.paybackYears} <span className="text-xs font-sans">Years</span></div>
+                <div className="text-xs text-slate-500 font-medium mb-1">{t("payback_period_lbl", "Payback Period")}</div>
+                <div className="text-base font-bold font-mono-num text-amber-600">{calculations.paybackYears} <span className="text-xs font-sans">{t("years_unit", "Years")}</span></div>
               </div>
 
               <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
-                <div className="text-xs text-slate-500 font-medium mb-1">Annual Savings</div>
+                <div className="text-xs text-slate-500 font-medium mb-1">{t("annual_savings_lbl", "Annual Savings")}</div>
                 <div className="text-base font-bold font-mono-num text-sky-700">₹{calculations.annualSavingsINR.toLocaleString("en-IN")}</div>
               </div>
             </div>
@@ -256,8 +256,13 @@ export default function SubsidyCalculator() {
             <div className="bg-amber-50/70 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
               <Info className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
               <p className="text-xs text-amber-900 leading-relaxed font-medium">
-                Under the PM Surya Ghar scheme, your {capacityKW} kW system investment will be fully recovered in{" "}
-                <strong className="font-mono-num">{calculations.paybackYears} years</strong>, saving ₹{calculations.annualSavingsINR.toLocaleString("en-IN")} annually for 25+ years!
+                {t(
+                  "subsidy_summary_advisory",
+                  "Under the PM Surya Ghar scheme, your {capacity} kW system investment will be fully recovered in {payback} years, saving ₹{savings} annually for 25+ years!"
+                )
+                  .replace("{capacity}", capacityKW)
+                  .replace("{payback}", calculations.paybackYears)
+                  .replace("{savings}", calculations.annualSavingsINR.toLocaleString("en-IN"))}
               </p>
             </div>
           </div>

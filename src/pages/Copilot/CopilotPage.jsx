@@ -121,10 +121,10 @@ export default function CopilotPage() {
   }
 
   const SUGGESTED_PROMPTS = [
-    "Show appliance schedule table",
-    "How to maximize battery storage life?",
-    "How much money did I save this month?",
-    "When is the best time to charge my EV?",
+    t("prompt_show_schedule", "Show appliance schedule table"),
+    t("prompt_battery_life", "How to maximize battery storage life?"),
+    t("prompt_savings", "How much money did I save this month?"),
+    t("prompt_charge_ev", "When is the best time to charge my EV?"),
   ];
 
   return (
@@ -137,12 +137,12 @@ export default function CopilotPage() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="font-extrabold text-slate-900 text-lg font-display">SolarSense AI Assistant & Expert Guide</h2>
+              <h2 className="font-extrabold text-slate-900 text-lg font-display">{t("copilot_title", "SolarSense AI Assistant & Expert Guide")}</h2>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200 font-mono-num">
-                Solar AI Expert
+                {t("copilot_badge", "Solar AI Expert")}
               </span>
             </div>
-            <p className="text-xs text-slate-500 font-medium">Your intelligent assistant for solar energy optimization, savings, battery management, and home appliance guidance.</p>
+            <p className="text-xs text-slate-500 font-medium">{t("copilot_subtitle_desc", "Your intelligent assistant for solar energy optimization, savings, battery management, and home appliance guidance.")}</p>
           </div>
         </div>
       </div>

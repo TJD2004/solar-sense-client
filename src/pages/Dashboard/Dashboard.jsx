@@ -64,9 +64,9 @@ export default function Dashboard() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight font-display">
-            System Operations Overview
+            {t("sys_ops_overview", "System Operations Overview")}
           </h1>
-          <p className="text-xs text-slate-500 font-medium">Real-time solar generation telemetry & generative AI performance insights.</p>
+          <p className="text-xs text-slate-500 font-medium">{t("sys_ops_sub", "Real-time solar generation telemetry & generative AI performance insights.")}</p>
         </div>
         <VoiceSummaryButton />
       </div>

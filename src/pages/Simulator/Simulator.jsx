@@ -115,16 +115,16 @@ export default function Simulator() {
               <div className="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
                 <Box className="w-5 h-5 stroke-[2.5]" />
               </div>
-              <h2>High-Tech Operations Control Room</h2>
+              <h2>{t("control_room_title", "High-Tech Operations Control Room")}</h2>
             </div>
             <p className="text-xs text-slate-500 font-medium mt-1">
-              3D Digital Twin visualization canvas & real-time Firebase telemetry synchronization layer.
+              {t("control_room_sub", "3D Digital Twin visualization canvas & real-time Firebase telemetry synchronization layer.")}
             </p>
           </div>
 
           <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1 text-xs font-mono-num font-bold text-emerald-700">
             <Radio className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
-            <span>FIREBASE RTDB: CONNECTED</span>
+            <span>{t("firebase_connected", "FIREBASE RTDB: CONNECTED")}</span>
           </div>
         </div>
       </div>
@@ -134,14 +134,14 @@ export default function Simulator() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm font-bold text-slate-800 uppercase tracking-wide font-display">
             <Cpu className="w-4 h-4 text-amber-500" />
-            <span>3D Solar Array Model Visualizer (Firebase Live Telemetry)</span>
+            <span>{t("visualizer_title", "3D Solar Array Model Visualizer (Firebase Live Telemetry)")}</span>
           </div>
           <button
             type="button"
             onClick={() => setRotationAngle((r) => r + 45)}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold text-xs rounded-lg border border-slate-200"
           >
-            <RefreshCw className="w-3.5 h-3.5" /> Orbit View
+            <RefreshCw className="w-3.5 h-3.5" /> {t("orbit_view_btn", "Orbit View")}
           </button>
         </div>
 
@@ -152,11 +152,11 @@ export default function Simulator() {
           {/* Overlay Telemetry HUD */}
           <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md border border-slate-200 rounded-lg p-2.5 text-[11px] font-mono-num space-y-1 text-slate-700 shadow-xs">
             <div className="font-bold text-slate-900 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" /> TELEMETRY STREAM
+              <span className="w-2 h-2 rounded-full bg-emerald-500" /> {t("telemetry_stream_lbl", "TELEMETRY STREAM")}
             </div>
-            <div>Solar Output: <strong className="text-amber-600">{live.solar} kW</strong></div>
-            <div>Panel Temp: <strong className="text-sky-600">{live.panelTemp ?? 34}°C</strong></div>
-            <div>Efficiency: <strong className="text-emerald-600">98.4%</strong></div>
+            <div>{t("solar_output_lbl", "Solar Output:")} <strong className="text-amber-600">{live.solar} kW</strong></div>
+            <div>{t("panel_temp_lbl", "Panel Temp")}: <strong className="text-sky-600">{live.panelTemp ?? 34}°C</strong></div>
+            <div>{t("efficiency_lbl", "Efficiency")}: <strong className="text-emerald-600">98.4%</strong></div>
           </div>
         </div>
       </div>
@@ -165,7 +165,7 @@ export default function Simulator() {
       <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] space-y-4">
         <div className="flex items-center gap-2 text-sm font-bold text-slate-800 uppercase tracking-wide font-display">
           <SlidersHorizontal className="w-4 h-4 text-sky-500" />
-          <span>Interactive What-If Simulation Engine</span>
+          <span>{t("whatif_engine_title", "Interactive What-If Simulation Engine")}</span>
         </div>
 
         <div role="group" aria-label="What-If Simulator" className="flex items-center gap-2 flex-wrap">

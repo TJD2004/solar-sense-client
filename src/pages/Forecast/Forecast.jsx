@@ -46,8 +46,8 @@ export default function Forecast() {
             <CloudSun className="w-6 h-6 stroke-[2.2]" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900 font-display">Solar Yield Forecast & Weather Intelligence</h1>
-            <p className="text-xs text-slate-500 font-medium">Predictive machine learning models synchronized with meteorological forecasts.</p>
+            <h1 className="text-xl font-bold text-slate-900 font-display">{t("forecast_weather_header", "Solar Yield Forecast & Weather Intelligence")}</h1>
+            <p className="text-xs text-slate-500 font-medium">{t("forecast_weather_sub", "Predictive machine learning models synchronized with meteorological forecasts.")}</p>
           </div>
         </div>
       </div>
@@ -59,10 +59,10 @@ export default function Forecast() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2 font-bold text-slate-800 text-sm tracking-wide uppercase font-display">
               <Compass className="w-4 h-4 text-sky-500 stroke-[2.5]" />
-              <span>Meteorological Map & Irradiance Field</span>
+              <span>{t("weather_map_title", "Meteorological Map & Irradiance Field")}</span>
             </div>
             <span className="text-xs font-mono-num font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
-              100% CLEAR SKY
+              {t("clear_sky_label", "100% CLEAR SKY")}
             </span>
           </div>
 
@@ -71,7 +71,7 @@ export default function Forecast() {
             <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
               <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium mb-1">
                 <Sun className="w-4 h-4 text-amber-500" />
-                <span>Irradiance</span>
+                <span>{t("irradiance_lbl", "Irradiance")}</span>
               </div>
               <div className="text-lg font-bold font-mono-num text-slate-900">895 <span className="text-xs font-sans text-slate-500">W/m²</span></div>
             </div>
@@ -79,7 +79,7 @@ export default function Forecast() {
             <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
               <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium mb-1">
                 <Thermometer className="w-4 h-4 text-rose-500" />
-                <span>Panel Temp</span>
+                <span>{t("panel_temp_lbl", "Panel Temp")}</span>
               </div>
               <div className="text-lg font-bold font-mono-num text-slate-900">32.4 <span className="text-xs font-sans text-slate-500">°C</span></div>
             </div>
@@ -87,7 +87,7 @@ export default function Forecast() {
             <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
               <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium mb-1">
                 <Wind className="w-4 h-4 text-sky-500" />
-                <span>Wind Speed</span>
+                <span>{t("wind_speed_lbl", "Wind Speed")}</span>
               </div>
               <div className="text-lg font-bold font-mono-num text-slate-900">14.2 <span className="text-xs font-sans text-slate-500">km/h</span></div>
             </div>
@@ -95,7 +95,7 @@ export default function Forecast() {
             <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
               <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium mb-1">
                 <Droplets className="w-4 h-4 text-blue-500" />
-                <span>Humidity</span>
+                <span>{t("humidity_lbl", "Humidity")}</span>
               </div>
               <div className="text-lg font-bold font-mono-num text-slate-900">42 <span className="text-xs font-sans text-slate-500">%</span></div>
             </div>
@@ -104,7 +104,7 @@ export default function Forecast() {
           <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center gap-3 mt-2">
             <Eye className="w-5 h-5 text-emerald-600 shrink-0" />
             <p className="text-xs text-emerald-900 font-medium">
-              High solar irradiance expected continuously for the next 48 hours. Optimum angle alignment detected.
+              {t("weather_advisory_body", "High solar irradiance expected continuously for the next 48 hours. Optimum angle alignment detected.")}
             </p>
           </div>
         </div>
@@ -117,7 +117,7 @@ export default function Forecast() {
           <div className="text-5xl font-extrabold font-mono-num tracking-tight my-2">
             {tomorrowKWh}
           </div>
-          <div className="text-sm font-semibold text-amber-100 font-mono-num mb-4">kWh Total Production</div>
+          <div className="text-sm font-semibold text-amber-100 font-mono-num mb-4">{t("kwh_total_prod", "kWh Total Production")}</div>
           <div className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-medium text-white border border-white/30">
             ☀️ {t("expected_sky", "Expected clear-sky generation")}
           </div>
@@ -129,7 +129,7 @@ export default function Forecast() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2 text-sm font-bold text-slate-800 tracking-wide uppercase font-display">
             <Sun className="w-4 h-4 text-amber-500 stroke-[2.5]" />
-            <span>Intraday Hourly Production Trend</span>
+            <span>{t("intraday_trend", "Intraday Hourly Production Trend")}</span>
           </div>
         </div>
 
