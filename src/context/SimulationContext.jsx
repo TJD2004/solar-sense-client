@@ -173,10 +173,97 @@ export function SimulationProvider({ children }) {
     ? backendStatus.anomalyActive
     : scenarioId !== "normal" || transientBlip || isExtremeTemp || isCloudyOrRain;
 
+  // ---- System Profile, Inverter Config, and Service Request State
+  const [systemProfile, setSystemProfileState] = useState(() => {
+    try {
+      const saved = localStorage.getItem("solarsense_system_profile");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {
+      installerCompany: "Tata Power Solar",
+      inverterModel: "Sungrow SG5.0RS",
+      capacityKW: 5.0,
+      panelCount: 12,
+      batteryCapacityKWh: 10.0,
+      installationDate: "2024-03-15",
+    };
+  });
+
+  const updateSystemProfile = useCallback((newProfile) => {
+    setSystemProfileState((prev) => {
+      const updated = { ...prev, ...newProfile };
+      try {
+        localStorage.setItem("solarsense_system_profile", JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  }, []);
+
+  const [inverterConfig, setInverterConfigState] = useState(() => {
+    try {
+      const saved = localStorage.getItem("solarsense_inverter_config");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {
+      mode: "simulator", // "cloud" | "modbus" | "simulator"
+      provider: "enphase",
+      apiKey: "env_key_live_solar_84920",
+      plantId: "STATION-IND-4019",
+      serialNumber: "SN-984217",
+      pollingRate: 5,
+      gatewayIp: "192.168.1.120",
+      gatewayPort: 502,
+      slaveId: 1,
+      registerMap: "sunspec_ieee1547",
+    };
+  });
+
+  const updateInverterConfig = useCallback((newConfig) => {
+    setInverterConfigState((prev) => {
+      const updated = { ...prev, ...newConfig };
+      try {
+        localStorage.setItem("solarsense_inverter_config", JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  }, []);
+
+  const [serviceTickets, setServiceTickets] = useState(() => {
+    try {
+      const saved = localStorage.getItem("solarsense_service_tickets");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return [];
+  });
+
+  const addServiceTicket = useCallback((ticket) => {
+    setServiceTickets((prev) => {
+      const updated = [ticket, ...prev];
+      try {
+        localStorage.setItem("solarsense_service_tickets", JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  }, []);
+
+  // Global Modal Visibility States
+  const [systemModalOpen, setSystemModalOpen] = useState(false);
+  const [inverterModalOpen, setInverterModalOpen] = useState(false);
+  const [serviceModalOpen, setServiceModalOpen] = useState(false);
+  const [serviceModalInitialData, setServiceModalInitialData] = useState(null);
+
+  const openServiceModal = useCallback((initialData = null) => {
+    setServiceModalInitialData(initialData);
+    setServiceModalOpen(true);
+  }, []);
+
   const baselineSystem = useMemo(() => {
-    if (!usingFallback && backendStatus) return backendStatus.baselineSystem;
-    return { capacityKW: BASELINE_SYSTEM.capacityKW, dailyKWh };
-  }, [usingFallback, backendStatus, dailyKWh]);
+    const userCapacity = Number(systemProfile?.capacityKW) || BASELINE_SYSTEM.capacityKW;
+    if (!usingFallback && backendStatus) {
+      return { ...backendStatus.baselineSystem, capacityKW: userCapacity };
+    }
+    return { capacityKW: userCapacity, dailyKWh };
+  }, [usingFallback, backendStatus, dailyKWh, systemProfile?.capacityKW]);
 
   const overrides = useMemo(() => {
     if (!usingFallback && backendStatus) return backendStatus.overrides || {};
@@ -251,6 +338,22 @@ export function SimulationProvider({ children }) {
       transientBlip,
       baselineSystem,
       overrides,
+      // system onboarding & hardware
+      systemProfile,
+      updateSystemProfile,
+      inverterConfig,
+      updateInverterConfig,
+      serviceTickets,
+      addServiceTicket,
+      // modal triggers
+      systemModalOpen,
+      setSystemModalOpen,
+      inverterModalOpen,
+      setInverterModalOpen,
+      serviceModalOpen,
+      setServiceModalOpen,
+      serviceModalInitialData,
+      openServiceModal,
       // game-like / real-time extras
       connection, // "standalone" | "connecting" | "live" | "reconnecting" | "fallback"
       isLive: connection === "live",
@@ -273,6 +376,17 @@ export function SimulationProvider({ children }) {
       transientBlip,
       baselineSystem,
       overrides,
+      systemProfile,
+      updateSystemProfile,
+      inverterConfig,
+      updateInverterConfig,
+      serviceTickets,
+      addServiceTicket,
+      systemModalOpen,
+      inverterModalOpen,
+      serviceModalOpen,
+      serviceModalInitialData,
+      openServiceModal,
       connection,
       eventLog,
     ]

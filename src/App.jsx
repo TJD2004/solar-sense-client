@@ -8,6 +8,10 @@ import { SimulationProvider } from "./context/SimulationContext.jsx";
 import { LanguageProvider } from "./i18n/LanguageContext.jsx";
 import { NotificationProvider } from "./context/NotificationContext.jsx";
 
+import SystemProfileModal from "./components/Modals/SystemProfileModal.jsx";
+import ConnectInverterModal from "./components/Modals/ConnectInverterModal.jsx";
+import ServiceRequestModal from "./components/Modals/ServiceRequestModal.jsx";
+
 import Dashboard from "./pages/Dashboard/Dashboard.jsx";
 import Analytics from "./pages/Analytics/Analytics.jsx";
 import Forecast from "./pages/Forecast/Forecast.jsx";
@@ -34,6 +38,9 @@ export default function App() {
               </header>
 
               <NotificationDrawer />
+              <SystemProfileModal />
+              <ConnectInverterModal />
+              <ServiceRequestModal />
 
               <main id="main-content" className="flex-1 w-full px-4 sm:px-6 lg:px-8 xl:px-10 pb-16">
                 <ErrorBoundary>

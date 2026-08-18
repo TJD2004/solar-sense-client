@@ -1,11 +1,17 @@
 import React from "react";
-import { Sun, Globe } from "lucide-react";
+import { Sun, Globe, Cpu, Settings } from "lucide-react";
 import { useSimulation } from "../../context/SimulationContext.jsx";
 import { useLanguage } from "../../i18n/LanguageContext.jsx";
 import { NotificationBell } from "./NotificationDrawer.jsx";
 
 export default function TopBar() {
-  const { connection } = useSimulation();
+  const {
+    connection,
+    inverterConfig,
+    systemProfile,
+    setInverterModalOpen,
+    setSystemModalOpen,
+  } = useSimulation();
   const { language, setLanguage, languages, t } = useLanguage();
 
   const CONNECTION_LABEL = {
@@ -19,11 +25,18 @@ export default function TopBar() {
   const label = CONNECTION_LABEL[connection] || CONNECTION_LABEL.live;
   const isLive = connection === "live" || connection === "connecting" || connection === "reconnecting";
 
+  const inverterBadgeLabel =
+    inverterConfig?.mode === "cloud"
+      ? t("conn_badge_cloud", "Cloud API Active")
+      : inverterConfig?.mode === "modbus"
+      ? t("conn_badge_modbus", "Modbus RTU/TCP")
+      : t("conn_badge_sim", "Simulated Twin Active");
+
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-10 h-14 flex items-center justify-between border-b border-slate-100">
+    <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-10 h-14 flex items-center justify-between border-b border-slate-100 gap-2 flex-wrap sm:flex-nowrap">
 
       {/* Brand */}
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-2.5 shrink-0">
         <div className="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center shadow-xs">
           <Sun className="w-4.5 h-4.5 stroke-[2.5]" />
         </div>
@@ -33,7 +46,30 @@ export default function TopBar() {
       </div>
 
       {/* Action Controls & Status */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+        {/* Connect Inverter Quick Action */}
+        <button
+          type="button"
+          onClick={() => setInverterModalOpen(true)}
+          title={t("connect_inverter_title", "Inverter Telemetry Connection")}
+          className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50/80 hover:bg-blue-100 text-blue-700 border border-blue-200/80 text-xs font-bold transition-all"
+        >
+          <Cpu className="w-3.5 h-3.5 text-blue-600" />
+          <span>{inverterBadgeLabel}</span>
+        </button>
+
+        {/* System Hardware Profile Quick Action */}
+        <button
+          type="button"
+          onClick={() => setSystemModalOpen(true)}
+          title={t("system_profile_title", "Solar Plant Setup & Onboarding")}
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-slate-700 border border-slate-200 text-xs font-bold transition-all"
+        >
+          <Settings className="w-3.5 h-3.5 text-slate-500" />
+          <span className="hidden sm:inline">{t("btn_system_profile", "System Specs")}:</span>
+          <span className="font-mono-num font-extrabold text-amber-600">{systemProfile?.capacityKW || 5} kW</span>
+        </button>
+
         {/* Notification Bell */}
         <NotificationBell />
 

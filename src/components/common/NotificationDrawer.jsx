@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Bell, X, CheckCheck, Trash2, AlertTriangle, Info, AlertOctagon, ShieldAlert } from "lucide-react";
+import { Bell, X, CheckCheck, Trash2, AlertTriangle, Info, AlertOctagon, ShieldAlert, Wrench } from "lucide-react";
 import { useNotifications } from "../../context/NotificationContext.jsx";
 import { useLanguage } from "../../i18n/LanguageContext.jsx";
+import { useSimulation } from "../../context/SimulationContext.jsx";
 
 function formatNotifTime(d) {
   if (!d) return "";
@@ -38,6 +39,7 @@ export function NotificationBell() {
 export default function NotificationDrawer() {
   const { notifications, unreadCount, drawerOpen, setDrawerOpen, markAsRead, markAllAsRead, clearAll } =
     useNotifications();
+  const { openServiceModal } = useSimulation();
   const { t } = useLanguage();
   const [filter, setFilter] = useState("all"); // "all" | "critical" | "warning" | "info"
 
@@ -188,6 +190,26 @@ export default function NotificationDrawer() {
                       <p className="text-xs text-slate-600 leading-relaxed font-medium">
                         {displayMessage}
                       </p>
+
+                      {n.type === "critical" && (
+                        <div className="pt-2">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDrawerOpen(false);
+                              openServiceModal({
+                                issue: "inverter_fault",
+                                notes: `${displayTitle}: ${displayMessage}`,
+                              });
+                            }}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold shadow-xs transition-all"
+                          >
+                            <Wrench className="w-3 h-3" />
+                            <span>{t("btn_request_service", "Request Service")}</span>
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

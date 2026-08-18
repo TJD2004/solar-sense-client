@@ -1,6 +1,7 @@
 import React from "react";
-import { Sparkles, Brain, Bot, CheckCircle } from "lucide-react";
+import { Sparkles, Brain, Bot, CheckCircle, Wrench } from "lucide-react";
 import { useLanguage } from "../../i18n/LanguageContext.jsx";
+import { useSimulation } from "../../context/SimulationContext.jsx";
 
 const INSIGHT_TRANSLATIONS = {
   hi: {
@@ -64,25 +65,32 @@ export default function AIInsightCard({
   loading,
 }) {
   const { language, t } = useLanguage();
+  const { anomalyActive, openServiceModal } = useSimulation();
   const langDict = INSIGHT_TRANSLATIONS[language];
 
   let displayTitle = t("ai_detective_title", title || "AI Performance Detective");
   let displayBody = body || "Production is running close to expected levels.";
   let displayTags = Array.isArray(tags) ? tags : ["☁️ Cloud cover", "🌳 Shading"];
 
+  let detectedIssueCode = "inverter_fault";
+
   if (langDict && displayBody) {
     if (displayBody.includes("10:00") && displayBody.includes("15:00")) {
       displayBody = langDict.cloudy_body;
       displayTags = langDict.cloudy_tags;
+      detectedIssueCode = "shading";
     } else if (displayBody.includes("14:00–17:00") || displayBody.includes("14:00-17:00")) {
       displayBody = langDict.shading_body;
       displayTags = langDict.shading_tags;
+      detectedIssueCode = "shading";
     } else if (displayBody.includes("dust") || displayBody.includes("soiling") || displayBody.includes("slow")) {
       displayBody = langDict.soiling_body;
       displayTags = langDict.soiling_tags;
+      detectedIssueCode = "soiling";
     } else if (displayBody.includes("12:00") || displayBody.includes("inverter")) {
       displayBody = langDict.inverter_body;
       displayTags = langDict.inverter_tags;
+      detectedIssueCode = "inverter_fault";
     } else if (displayBody.includes("close to expected")) {
       displayBody = langDict.normal_body;
       displayTags = langDict.normal_tags;
@@ -91,13 +99,15 @@ export default function AIInsightCard({
     }
   }
 
+  const isAnomaly = anomalyActive || (displayBody && !displayBody.includes("close to expected") && !displayBody.includes("अपेक्षित वक्र") && !displayBody.includes("अपेक्षित वक्रा"));
+
   return (
     <div className="bg-white border-2 border-purple-500/80 rounded-2xl p-6 shadow-[0_10px_25px_-5px_rgba(139,92,246,0.12)] flex items-start gap-4 transition-all">
       <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center border border-purple-200 shrink-0">
         <Sparkles className="w-5 h-5 stroke-[2.2]" />
       </div>
-      <div className="space-y-2 flex-1">
-        <div className="flex items-center justify-between">
+      <div className="space-y-2.5 flex-1">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <h3 className="font-extrabold text-slate-900 text-sm font-display">{displayTitle}</h3>
             {source && (
@@ -106,13 +116,24 @@ export default function AIInsightCard({
               </span>
             )}
           </div>
+
+          {isAnomaly && (
+            <button
+              type="button"
+              onClick={() => openServiceModal({ issue: detectedIssueCode, notes: displayBody })}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs transition-all animate-pulse"
+            >
+              <Wrench className="w-3.5 h-3.5" />
+              <span>{t("btn_contact_tech", "Contact Technician")}</span>
+            </button>
+          )}
         </div>
 
         <p className={`text-xs text-slate-600 leading-relaxed font-medium transition-opacity ${loading ? "opacity-60" : "opacity-100"}`}>
           {displayBody}
         </p>
 
-        <div className="flex items-center gap-2 flex-wrap pt-1">
+        <div className="flex items-center gap-2 flex-wrap pt-0.5">
           {displayTags.map((tag) => (
             <span key={tag} className="px-2.5 py-1 rounded-lg bg-purple-50 text-purple-800 border border-purple-200/80 text-[11px] font-semibold">
               {tag}

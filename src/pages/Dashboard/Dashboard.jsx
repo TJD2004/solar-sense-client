@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Sun, Home, Battery, Zap, Gauge, AlertTriangle, Activity } from "lucide-react";
+import { Sun, Home, Battery, Zap, Gauge, AlertTriangle, Activity, Wrench } from "lucide-react";
 
 import StatTile from "../../components/common/StatTile.jsx";
 import ImpactCards from "../../components/common/ImpactCards.jsx";
@@ -19,7 +19,7 @@ import MLPredictionCard from "../../components/MLShowcase/MLPredictionCard.jsx";
 import MLJudgesCard from "../../components/MLShowcase/MLJudgesCard.jsx";
 
 export default function Dashboard() {
-  const { initializing, offline, toggleOffline, live, curve, healthScore, anomalyActive, scenario } = useSimulation();
+  const { initializing, offline, toggleOffline, live, curve, healthScore, anomalyActive, scenario, openServiceModal } = useSimulation();
   const { t } = useLanguage();
 
   const [insight, setInsight] = useState(null);
@@ -73,23 +73,39 @@ export default function Dashboard() {
 
       {/* Anomaly Alert Banner */}
       {anomalyActive && (
-        <div className="bg-rose-50 border border-rose-200 text-rose-900 rounded-xl p-4 flex items-center gap-3 shadow-xs">
-          <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
-          <div className="text-sm font-medium">
-            {scenario.id === "inverter"
-              ? `🚨 ${t("alert_inverter", "Inverter Hardware Failure")} — ${t("inverter_halted", "Power generation halted. Hardware check required.")}`
-              : scenario.id === "soiling"
-              ? `🧹 ${t("alert_soiling", "Panel Soiling & Dust Alert")} — ${t("soiling_desc_banner", "Dust buildup is reducing panel absorption. Cleaning recommended.")}`
-              : scenario.id === "shading"
-              ? `🌳 ${t("alert_shading", "Array Shading Alert")} — ${t("shading_desc_banner", "Partial tree or structure shadow obstructing solar array.")}`
-              : (live?.panelTemp >= 45 || live?.ambientTemp >= 40)
-              ? `🔥 ${t("alert_temp_high", "High Panel Temperature Alert")} — ${live?.panelTemp ?? live?.ambientTemp}°C (${t("thermal_loss", "Thermal Efficiency Degradation")})`
-              : (live?.irradiance <= 350)
-              ? `☁️ ${t("alert_cloudy", "Cloud Cover / Low Irradiance Alert")} — ${live?.irradiance} W/m²`
-              : scenario.id === "normal"
-              ? t("anomaly_normal", "Production anomaly detected — output dropped sharply in the last interval.")
-              : `${scenario.emoji} ${t("anomaly_detected", "Production anomaly detected")} — ${t("scenario_" + scenario.id, scenario.label)}`}
+        <div className="bg-rose-50 border border-rose-200 text-rose-900 rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap shadow-xs">
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
+            <div className="text-sm font-medium">
+              {scenario.id === "inverter"
+                ? `🚨 ${t("alert_inverter", "Inverter Hardware Failure")} — ${t("inverter_halted", "Power generation halted. Hardware check required.")}`
+                : scenario.id === "soiling"
+                ? `🧹 ${t("alert_soiling", "Panel Soiling & Dust Alert")} — ${t("soiling_desc_banner", "Dust buildup is reducing panel absorption. Cleaning recommended.")}`
+                : scenario.id === "shading"
+                ? `🌳 ${t("alert_shading", "Array Shading Alert")} — ${t("shading_desc_banner", "Partial tree or structure shadow obstructing solar array.")}`
+                : (live?.panelTemp >= 45 || live?.ambientTemp >= 40)
+                ? `🔥 ${t("alert_temp_high", "High Panel Temperature Alert")} — ${live?.panelTemp ?? live?.ambientTemp}°C (${t("thermal_loss", "Thermal Efficiency Degradation")})`
+                : (live?.irradiance <= 350)
+                ? `☁️ ${t("alert_cloudy", "Cloud Cover / Low Irradiance Alert")} — ${live?.irradiance} W/m²`
+                : scenario.id === "normal"
+                ? t("anomaly_normal", "Production anomaly detected — output dropped sharply in the last interval.")
+                : `${scenario.emoji} ${t("anomaly_detected", "Production anomaly detected")} — ${t("scenario_" + scenario.id, scenario.label)}`}
+            </div>
           </div>
+
+          <button
+            type="button"
+            onClick={() =>
+              openServiceModal({
+                issue: scenario.id === "inverter" ? "inverter_fault" : scenario.id === "soiling" ? "soiling" : "shading",
+                notes: "Anomaly detected from Dashboard banner",
+              })
+            }
+            className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 shrink-0"
+          >
+            <Wrench className="w-3.5 h-3.5" />
+            <span>{t("btn_contact_tech", "Contact Technician")}</span>
+          </button>
         </div>
       )}
 
